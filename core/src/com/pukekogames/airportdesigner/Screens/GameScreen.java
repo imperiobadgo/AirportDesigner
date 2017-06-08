@@ -10,6 +10,8 @@ import com.pukekogames.airportdesigner.GameContent;
 import com.pukekogames.airportdesigner.GameInstance.GameInstance;
 import com.pukekogames.airportdesigner.Main;
 import com.pukekogames.airportdesigner.Objects.Roads.Road;
+import com.pukekogames.airportdesigner.Objects.Vehicles.Airplane;
+import com.pukekogames.airportdesigner.Objects.Vehicles.Vehicle;
 import com.pukekogames.airportdesigner.TextureLoader;
 
 /**
@@ -32,10 +34,13 @@ public class GameScreen implements Screen {
         GameInstance.Settings().gameType = 1;
         GameContent.setNewGame();
         logger = new FPSLogger();
+        GameInstance.Settings().gameSpeed = 10;
     }
 
     @Override
     public void render(float delta) {
+        GameInstance.Instance().tick();
+
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         spriteBatch.begin();
         logger.log();
@@ -43,6 +48,18 @@ public class GameScreen implements Screen {
             Road road = GameInstance.Airport().getRoad(i);
             DrawManager.draw(spriteBatch, road);
         }
+
+        for (int i = 0; i < GameInstance.Airport().getVehicleCount(); i++) {
+            Vehicle vehicle = GameInstance.Airport().getVehicle(i);
+            DrawManager.draw(spriteBatch, vehicle);
+        }
+
+        for (int i = 0; i < GameInstance.Airport().getAirplaneCount(); i++) {
+            Airplane airplane = GameInstance.Airport().getAirplane(i);
+            DrawManager.draw(spriteBatch, airplane);
+        }
+
+
 
         spriteBatch.end();
 

@@ -31,7 +31,8 @@ public class GameContent {
                 GameInstance.Reset();
 
                 generateDebugAirport();
-                for (int i = 0; i < 4; i++) {
+                GameInstance.Settings().level = 4;
+                for (int i = 0; i < 7; i++) {
                     GameInstance.AirlineManager().AddNewAirline();
                 }
                 for (int i = 0; i < GameInstance.AirlineManager().AirlinesCount(); i++) {
@@ -44,7 +45,7 @@ public class GameContent {
 
                 GameInstance.Instance().addMoney(1000L);
                 GameInstance.Settings().gameType = 0;
-                GameInstance.Settings().level = 3;
+
                 break;
         }
         GameInstance.Airport().CheckGateServicePossibility();

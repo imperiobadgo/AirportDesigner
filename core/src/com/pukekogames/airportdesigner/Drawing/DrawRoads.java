@@ -15,7 +15,7 @@ public class DrawRoads {
 
         if (texture != null){
             for (int i = 0; i < 10; i++) {
-                DrawManager.drawBatch(batch,texture, road.getX() / 50,road.getY() / 50, road.getHeading() + i, 0.05f);
+                DrawManager.drawBatch(batch,texture, road.getX() / 50 + 200,road.getY() / 50, road.getHeading() + i, 0.05f);
             }
 
         }
