@@ -6,7 +6,7 @@
 	<inherits name='Box2DLights' />
 
 	<inherits name='Main' />
-	<entry-point class='com.pukeko.airportdesigner.client.HtmlLauncher' />
+	<entry-point class='com.pukekogames.airportdesigner.client.HtmlLauncher' />
 	<set-configuration-property name='xsiframe.failIfScriptTag' value='FALSE'/>
 	<set-configuration-property name="gdx.assetpath" value="../android/assets" />
 </module>
