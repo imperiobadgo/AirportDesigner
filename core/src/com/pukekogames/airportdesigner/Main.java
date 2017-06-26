@@ -1,10 +1,14 @@
 package com.pukekogames.airportdesigner;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.pukekogames.airportdesigner.Screens.SplashScreen;
+import com.badlogic.gdx.input.GestureDetector;
+import com.pukekogames.airportdesigner.Screens.GameScreen;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -16,6 +20,7 @@ public class Main extends Game {
 	private long startTime;
 	private long totalTime;
 	private int frameCount;
+	GestureDetector gestureDetector;
 	private Random random;
 
 	public BitmapFont font;
@@ -37,7 +42,12 @@ public class Main extends Game {
 		random = new Random();
 
 		font = new BitmapFont();
-		setScreen(new SplashScreen(this));
+
+		gestureDetector = new GestureDetector(new GestureHandler(this));
+		Gdx.input.setInputProcessor(gestureDetector);
+
+//		setScreen(new SplashScreen(this));
+		setScreen(new GameScreen(this));
 	}
 
 	@Override
