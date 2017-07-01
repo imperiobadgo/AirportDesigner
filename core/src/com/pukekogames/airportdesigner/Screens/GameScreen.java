@@ -19,6 +19,7 @@ import com.pukekogames.airportdesigner.Main;
 import com.pukekogames.airportdesigner.Objects.Roads.Road;
 import com.pukekogames.airportdesigner.Objects.Vehicles.Airplane;
 import com.pukekogames.airportdesigner.Objects.Vehicles.Vehicle;
+import com.pukekogames.airportdesigner.Settings;
 import com.pukekogames.airportdesigner.TextureLoader;
 
 /**
@@ -29,6 +30,8 @@ public class GameScreen implements Screen {
     public static float PIXELS_PER_METER = 32;
     public static float WORLD_WIDTH_METERS = 100;
     public static float WORLD_HEIGHT_METERS = 100;
+
+    public float screenWidth, screenHeight;
 
     private Main main;
     private SpriteBatch spriteBatch;
@@ -46,6 +49,7 @@ public class GameScreen implements Screen {
         GameInstance.Settings().gameType = 1;
         GameContent.setNewGame();
         logger = new FPSLogger();
+
         GameInstance.Settings().gameSpeed = 5;
 
 
@@ -65,7 +69,7 @@ public class GameScreen implements Screen {
 
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         spriteBatch.begin();
-        logger.log();
+//        logger.log();
 
 //        Road road = GameInstance.Airport().getRoad(0);
 //        road.setHeading((road.getHeading() + 0.8f) % 360);
@@ -131,10 +135,31 @@ public class GameScreen implements Screen {
 
     }
 
+    public void zoomCamera(float zoom, float factor){
+        zoom = Math.max(Settings.Instance().minZoom, Math.min(zoom, Settings.Instance().maxZoom));
+        camera.zoom = zoom;
+
+
+        if (zoom > Settings.Instance().maxZoom - (Settings.Instance().maxZoom - Settings.Instance().minZoom) / 5 && factor > 0) {//just on the "last" bit
+            float deltaX = camera.position.x - screenWidth / 2;
+            float deltaY = camera.position.y - screenHeight / 2;
+            float translateFactor = 0.2f;
+
+            float translateX = -deltaX * translateFactor;
+            float translateY = -deltaY * translateFactor;
+            if (Math.abs(translateX) > 10 && Math.abs(translateY) > 10)
+                camera.translate(translateX, translateY);
+
+        }
+    }
+
     @Override
     public void resize(int width, int height) {
 //        camera.viewportWidth = PIXELS_PER_METER;
 //        camera.viewportHeight = PIXELS_PER_METER * (height / width);
+
+        screenWidth = width;
+        screenHeight = height;
 
       /*
       This resize code will ensure that the window is filled with world. The camera position will be maintained during
