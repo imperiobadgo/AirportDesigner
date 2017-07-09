@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import com.pukekogames.airportdesigner.Drawing.DrawManager;
@@ -16,6 +17,8 @@ import com.pukekogames.airportdesigner.Drawing.DrawRoads;
 import com.pukekogames.airportdesigner.GameContent;
 import com.pukekogames.airportdesigner.GameInstance.GameInstance;
 import com.pukekogames.airportdesigner.Main;
+import com.pukekogames.airportdesigner.Objects.Buildings.Building;
+import com.pukekogames.airportdesigner.Objects.RoadIntersection;
 import com.pukekogames.airportdesigner.Objects.Roads.Road;
 import com.pukekogames.airportdesigner.Objects.Vehicles.Airplane;
 import com.pukekogames.airportdesigner.Objects.Vehicles.Vehicle;
@@ -50,7 +53,7 @@ public class GameScreen implements Screen {
         GameContent.setNewGame();
         logger = new FPSLogger();
 
-        GameInstance.Settings().gameSpeed = 5;
+        GameInstance.Settings().gameSpeed = 10;
 
 
         camera = new OrthographicCamera();
@@ -66,14 +69,31 @@ public class GameScreen implements Screen {
         camera.update();
 
         spriteBatch.setProjectionMatrix(camera.combined);
-
+        DrawManager.getShapeRenderer().setProjectionMatrix(camera.combined);
+        Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        spriteBatch.begin();
-//        logger.log();
 
-//        Road road = GameInstance.Airport().getRoad(0);
-//        road.setHeading((road.getHeading() + 0.8f) % 360);
+        logger.log();
+
+//        spriteBatch.begin();
+//        Road road = GameInstance.Airport().getRoad(19);
+////        road.setHeading((road.getHeading() + 0.8f) % 360);
+//        road.calculateNewDirection(road.getHeading() + 0.1f, road.getLength());
 //        DrawRoads.draw(spriteBatch, road);
+//        spriteBatch.end();
+//
+//        DrawManager.getShapeRenderer().begin(ShapeRenderer.ShapeType.Line);
+//        DrawRoads.drawLines(spriteBatch, road);
+//        DrawManager.getShapeRenderer().end();
+
+        DrawManager.getShapeRenderer().begin(ShapeRenderer.ShapeType.Filled);
+        for (int i = 0; i < GameInstance.Airport().getRoadIntersectionCount(); i++) {
+            RoadIntersection roadIntersection = GameInstance.Airport().getRoadIntersection(i);
+            DrawManager.draw(spriteBatch, roadIntersection);
+        }
+        DrawManager.getShapeRenderer().end();
+
+        spriteBatch.begin();
         spriteBatch.disableBlending();
         for (int i = 0; i < GameInstance.Airport().getRoadCount(); i++) {
             Road road = GameInstance.Airport().getRoad(i);
@@ -81,19 +101,36 @@ public class GameScreen implements Screen {
 
         }
         spriteBatch.enableBlending();
+        spriteBatch.end();
+
+
+        DrawManager.getShapeRenderer().begin(ShapeRenderer.ShapeType.Line);
+        for (int i = 0; i < GameInstance.Airport().getRoadCount(); i++) {
+            Road road = GameInstance.Airport().getRoad(i);
+            DrawRoads.drawLines(spriteBatch, road);
+
+        }
+//        DrawRoads.drawLines(spriteBatch, GameInstance.Airport().getRoad(0));
+        DrawManager.getShapeRenderer().end();
+
+        spriteBatch.begin();
         for (int i = 0; i < GameInstance.Airport().getVehicleCount(); i++) {
             Vehicle vehicle = GameInstance.Airport().getVehicle(i);
             DrawManager.draw(spriteBatch, vehicle);
+        }
+
+        for (int i = 0; i < GameInstance.Airport().getBuildingCount(); i++) {
+            Building building = GameInstance.Airport().getBuilding(i);
+            DrawManager.draw(spriteBatch, building);
         }
 
         for (int i = 0; i < GameInstance.Airport().getAirplaneCount(); i++) {
             Airplane airplane = GameInstance.Airport().getAirplane(i);
             DrawManager.draw(spriteBatch, airplane);
         }
-
+        spriteBatch.end();
 //        System.out.println("Rendercalls: " + spriteBatch.renderCalls);
 
-        spriteBatch.end();
 
     }
 
@@ -101,7 +138,7 @@ public class GameScreen implements Screen {
         float move = 100;
         float zoom = 4f;
         float x, y;
-        if (Gdx.input.justTouched()){
+        if (Gdx.input.justTouched()) {
             x = Gdx.input.getX();
             y = Gdx.input.getY();
         }
@@ -135,7 +172,7 @@ public class GameScreen implements Screen {
 
     }
 
-    public void zoomCamera(float zoom, float factor){
+    public void zoomCamera(float zoom, float factor) {
         zoom = Math.max(Settings.Instance().minZoom, Math.min(zoom, Settings.Instance().maxZoom));
         camera.zoom = zoom;
 
@@ -194,7 +231,7 @@ public class GameScreen implements Screen {
 
     }
 
-    public OrthographicCamera getCamera(){
+    public OrthographicCamera getCamera() {
         return camera;
     }
 
