@@ -11,9 +11,11 @@ import com.pukekogames.airportdesigner.Screens.GameScreen;
 public class InputHandler implements InputProcessor {
 
     private final Main main;
+    private final GameScreen screen;
 
-    public InputHandler(Main main){
+    public InputHandler(Main main, GameScreen screen){
         this.main = main;
+        this.screen = screen;
     }
 
     @Override
@@ -33,6 +35,9 @@ public class InputHandler implements InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+
+//        System.out.println("touched " + screenX + "   " + screenY);
+        screen.setTouched(screenX, screenY);
         return false;
     }
 

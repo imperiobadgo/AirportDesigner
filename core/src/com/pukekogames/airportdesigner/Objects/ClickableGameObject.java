@@ -42,13 +42,14 @@ public abstract class ClickableGameObject extends GameObject {
         if (alignment == Alignment.Table && imageID != -1) {
             int scaledWidth = (int) (scale *width);
             int scaledHeight = (int) (scale * height);
-            PointInt centerPos = getPositionForRender(Align_X, Align_Y);
+            PointInt centerPos = new PointInt(Align_X, Align_Y);
             int diffX = centerPos.x - pos.x;
             int diffY = centerPos.y - pos.y;
             double distance = Math.sqrt(Math.pow(diffX, 2) + Math.pow(diffY, 2));
             return distance < GameInstance.Settings().clickRadius;
         } else {
-            PointInt centerPos = getPositionForRender(Align_X + width / 2, Align_Y + height / 2);
+            PointInt centerPos = new PointInt(Align_X + width / 2, Align_Y + height / 2);
+
             int diffX = centerPos.x - pos.x;
             int diffY = centerPos.y - pos.y;
             double distance = Math.sqrt(Math.pow(diffX, 2) + Math.pow(diffY, 2));

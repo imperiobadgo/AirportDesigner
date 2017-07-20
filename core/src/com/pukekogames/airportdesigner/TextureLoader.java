@@ -19,6 +19,22 @@ public class TextureLoader {
 
     Texture[] textures = new Texture[100];
 
+    public static int indexCircleButtonBackground = 70;
+    public static int indexCircleButtonBackgroundClicked = 71;
+    public static int indexOptionButton = 72;
+    public static int indexCircleButtonGoto = 73;
+    public static int indexCircleButtonHold = 74;
+    public static int indexCircleButtonInfo = 75;
+    public static int indexCircleButtonTakeOff = 76;
+    public static int indexButtonBuild = 80;
+    public static int indexButtonBuildRoad = 81;
+    public static int indexButtonBuildDepot = 82;
+    public static int indexButtonDelete = 83;
+    public static int indexButtonConstruct = 84;
+    public static int indexButtonAccept = 85;
+    public static int indexButtonCancel = 86;
+
+
     public void loadTextures(){
         textures[Images.indexAirplaneSmall] = new Texture(Gdx.files.internal("airplane_small.png"));
         textures[Images.indexAirplaneCessna] = new Texture(Gdx.files.internal("airplane_cessna.png"));
@@ -48,6 +64,23 @@ public class TextureLoader {
         textures[Images.indexBaggageDepot] = new Texture(Gdx.files.internal("depot_baggage.png"));
         textures[Images.indexTower] = new Texture(Gdx.files.internal("tower.png"));
         textures[Images.indexTerminal] = new Texture(Gdx.files.internal("terminal.png"));
+
+        textures[indexCircleButtonBackground] = new Texture(Gdx.files.internal("button_circlebackground.png"));
+        textures[indexCircleButtonBackgroundClicked] =new Texture(Gdx.files.internal("button_clickedcirclebackground.png"));
+
+        textures[indexOptionButton] = new Texture(Gdx.files.internal("button_options.png"));
+        textures[indexCircleButtonGoto] = new Texture(Gdx.files.internal("button_goto.png"));
+        textures[indexCircleButtonHold] = new Texture(Gdx.files.internal("button_hold.png"));
+        textures[indexCircleButtonInfo] = new Texture(Gdx.files.internal("button_info.png"));
+        textures[indexCircleButtonTakeOff] = new Texture(Gdx.files.internal("button_takeoff.png"));
+
+        textures[indexButtonBuild] = new Texture(Gdx.files.internal("button_build.png"));
+        textures[indexButtonBuildRoad] = new Texture(Gdx.files.internal("button_buildroad.png"));
+        textures[indexButtonBuildDepot] = new Texture(Gdx.files.internal("button_builddepot.png"));
+        textures[indexButtonConstruct] = new Texture(Gdx.files.internal("button_construct.png"));
+        textures[indexButtonDelete] = new Texture(Gdx.files.internal("button_delete.png"));
+        textures[indexButtonAccept] = new Texture(Gdx.files.internal("button_accept.png"));
+        textures[indexButtonCancel] = new Texture(Gdx.files.internal("button_cancel.png"));
     }
 
     public Texture getTexture(int textureIndex){

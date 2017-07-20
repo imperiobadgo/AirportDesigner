@@ -42,10 +42,11 @@ public class CommonSettings implements Serializable {
     public int MapSizeX = 2000;
     public int MapSizeY = 1000;
     public int DoubleMouseClick = 15;
-    public int clickRadius = 35;
+    public int clickRadius = 200;
     public int singleClickTime = 2;
     public int SelectionTime = 200;
     public int MessageShowTime = 200;
+    public int circleButtonWidth = 60;
 
     //Game
     public int level = 1;

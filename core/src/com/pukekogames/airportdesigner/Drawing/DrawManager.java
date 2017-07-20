@@ -9,6 +9,7 @@ import com.pukekogames.airportdesigner.Objects.GameObject;
 import com.pukekogames.airportdesigner.Objects.RoadIntersection;
 import com.pukekogames.airportdesigner.Objects.Roads.Road;
 import com.pukekogames.airportdesigner.Objects.Vehicles.Airplane;
+import com.pukekogames.airportdesigner.Objects.Vehicles.Bus;
 import com.pukekogames.airportdesigner.Objects.Vehicles.Vehicle;
 import com.pukekogames.airportdesigner.Screens.GameScreen;
 import com.pukekogames.airportdesigner.TextureLoader;
@@ -64,6 +65,25 @@ public class DrawManager {
 
 
             }
+        }
+    }
+
+    public static void drawPossibleSelection(SpriteBatch batch, ClickableGameObject object){
+        if (object instanceof Airplane) {
+            Airplane airplane = (Airplane) object;
+
+        } else if (object instanceof Bus) {
+            Bus bus = (Bus) object;
+
+        } else if (object instanceof Road) {
+            Road road = (Road) object;
+            DrawRoads.drawPossibleSelection(batch, road);
+        } else if (object instanceof RoadIntersection) {
+            RoadIntersection roadIntersection = (RoadIntersection) object;
+            DrawRoadIntersection.drawPossibleSelection(batch, roadIntersection, false);
+        } else if (object instanceof Building) {
+            Building building = (Building) object;
+            DrawBuildings.drawPossibleSelection(batch, building);
         }
     }
 

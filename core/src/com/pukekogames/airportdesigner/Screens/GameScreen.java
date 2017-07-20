@@ -2,28 +2,15 @@ package com.pukekogames.airportdesigner.Screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.FPSLogger;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector3;
+import com.pukekogames.airportdesigner.*;
 import com.pukekogames.airportdesigner.Drawing.DrawManager;
-import com.pukekogames.airportdesigner.Drawing.DrawRoads;
-import com.pukekogames.airportdesigner.GameContent;
 import com.pukekogames.airportdesigner.GameInstance.GameInstance;
-import com.pukekogames.airportdesigner.Main;
-import com.pukekogames.airportdesigner.Objects.Buildings.Building;
-import com.pukekogames.airportdesigner.Objects.RoadIntersection;
-import com.pukekogames.airportdesigner.Objects.Roads.Road;
-import com.pukekogames.airportdesigner.Objects.Vehicles.Airplane;
-import com.pukekogames.airportdesigner.Objects.Vehicles.Vehicle;
-import com.pukekogames.airportdesigner.Settings;
-import com.pukekogames.airportdesigner.TextureLoader;
 
 /**
  * Created by Marko Rapka on 08.06.2017.
@@ -41,22 +28,80 @@ public class GameScreen implements Screen {
     private OrthographicCamera camera;
     FPSLogger logger;
 
+    Vector3 screenPos;
+    Vector3 worldPos;
+
+//    private Skin skin;
+//    private Stage gameStage;
+//    private Table table;
+    private UiManager uiManager;
+    private Handler handler;
+
+
     public GameScreen(Main main) {
         this.main = main;
+        spriteBatch = new SpriteBatch();
+        TextureLoader.Instance().loadTextures();
+        logger = new FPSLogger();
+
+
+
+        camera = new OrthographicCamera();
+        uiManager = new UiManager(main, this);
+        handler = new Handler(main, uiManager);
+        screenPos = new Vector3();
+        worldPos = new Vector3();
     }
 
     @Override
     public void show() {
-        spriteBatch = new SpriteBatch();
-        TextureLoader.Instance().loadTextures();
+
+        uiManager.setup();
+
+//        skin = new Skin(Gdx.files.internal("ui\\uiskin.json"));
+////        skin = new Skin();
+//
+////        skin.addRegions(main.assets.get("ui\\uiskin.atlas", TextureAtlas.class));
+//        skin.add("default-font", main.font);
+////        skin.load(Gdx.files.internal("ui\\uiskin.json"));
+//
+//        gameStage = new Stage(new StretchViewport(Gdx.graphics.getWidth(),Gdx.graphics.getHeight()));
+
+//        table = new Table();
+//        table.setWidth(gameStage.getWidth());
+//        table.align(Align.center|Align.top);
+//        table.setPosition(0, Gdx.graphics.getHeight());
+//
+//
+//        TextButton startButton = new TextButton("Start Game", skin);
+//        TextButton quitButton = new TextButton("Quit Game", skin);
+//
+//        table.padTop(30);
+//        table.add(startButton).padBottom(30);
+//        table.row();
+//        table.add(quitButton);
+//
+//        gameStage.addActor(table);
+
+
+        InputMultiplexer im = new InputMultiplexer();
+
+        GestureDetector gestureDetector = new GestureDetector(new GestureHandler(main));
+        InputHandler inputHandler = new InputHandler(main, this);
+        im.addProcessor(uiManager.getScreenStage());
+        im.addProcessor(uiManager.getGameStage());
+        im.addProcessor(gestureDetector);
+        im.addProcessor(inputHandler);
+
+        Gdx.input.setInputProcessor(im);
+
+
         GameInstance.Settings().gameType = 1;
         GameContent.setNewGame();
-        logger = new FPSLogger();
-
-        GameInstance.Settings().gameSpeed = 10;
 
 
-        camera = new OrthographicCamera();
+        GameInstance.Settings().gameSpeed = 2;
+
         camera.zoom = 1000;
         camera.update();
     }
@@ -64,7 +109,7 @@ public class GameScreen implements Screen {
     @Override
     public void render(float delta) {
         handleInput();
-        GameInstance.Instance().tick();
+        handler.tick();
 
         camera.update();
 
@@ -86,49 +131,62 @@ public class GameScreen implements Screen {
 //        DrawRoads.drawLines(spriteBatch, road);
 //        DrawManager.getShapeRenderer().end();
 
-        DrawManager.getShapeRenderer().begin(ShapeRenderer.ShapeType.Filled);
-        for (int i = 0; i < GameInstance.Airport().getRoadIntersectionCount(); i++) {
-            RoadIntersection roadIntersection = GameInstance.Airport().getRoadIntersection(i);
-            DrawManager.draw(spriteBatch, roadIntersection);
-        }
-        DrawManager.getShapeRenderer().end();
 
+        handler.draw(spriteBatch);
+
+//        DrawManager.getShapeRenderer().begin(ShapeRenderer.ShapeType.Filled);
+//        for (int i = 0; i < GameInstance.Airport().getRoadIntersectionCount(); i++) {
+//            RoadIntersection roadIntersection = GameInstance.Airport().getRoadIntersection(i);
+//            DrawManager.draw(spriteBatch, roadIntersection);
+//        }
+//        DrawManager.getShapeRenderer().end();
+//
+//        spriteBatch.begin();
+//        spriteBatch.disableBlending();
+//        for (int i = 0; i < GameInstance.Airport().getRoadCount(); i++) {
+//            Road road = GameInstance.Airport().getRoad(i);
+//            DrawManager.draw(spriteBatch, road);
+//
+//        }
+//        spriteBatch.enableBlending();
+//        spriteBatch.end();
+//
+//
+//        DrawManager.getShapeRenderer().begin(ShapeRenderer.ShapeType.Line);
+//        for (int i = 0; i < GameInstance.Airport().getRoadCount(); i++) {
+//            Road road = GameInstance.Airport().getRoad(i);
+//            DrawRoads.drawLines(spriteBatch, road);
+//
+//        }
+////        DrawRoads.drawLines(spriteBatch, GameInstance.Airport().getRoad(0));
+//        DrawManager.getShapeRenderer().end();
+//
+//        spriteBatch.begin();
+//        for (int i = 0; i < GameInstance.Airport().getVehicleCount(); i++) {
+//            Vehicle vehicle = GameInstance.Airport().getVehicle(i);
+//            DrawManager.draw(spriteBatch, vehicle);
+//        }
+//
+//        for (int i = 0; i < GameInstance.Airport().getBuildingCount(); i++) {
+//            Building building = GameInstance.Airport().getBuilding(i);
+//            DrawManager.draw(spriteBatch, building);
+//        }
+//
+//        for (int i = 0; i < GameInstance.Airport().getAirplaneCount(); i++) {
+//            Airplane airplane = GameInstance.Airport().getAirplane(i);
+//            DrawManager.draw(spriteBatch, airplane);
+//        }
         spriteBatch.begin();
-        spriteBatch.disableBlending();
-        for (int i = 0; i < GameInstance.Airport().getRoadCount(); i++) {
-            Road road = GameInstance.Airport().getRoad(i);
-            DrawManager.draw(spriteBatch, road);
+        main.font.setColor(Color.BLACK);
+        main.font.draw(spriteBatch, "Test Text", worldPos.x, worldPos.y);
 
-        }
-        spriteBatch.enableBlending();
         spriteBatch.end();
 
+        uiManager.tick(delta);
+        uiManager.render(spriteBatch);
 
-        DrawManager.getShapeRenderer().begin(ShapeRenderer.ShapeType.Line);
-        for (int i = 0; i < GameInstance.Airport().getRoadCount(); i++) {
-            Road road = GameInstance.Airport().getRoad(i);
-            DrawRoads.drawLines(spriteBatch, road);
+//        spriteBatch.end();
 
-        }
-//        DrawRoads.drawLines(spriteBatch, GameInstance.Airport().getRoad(0));
-        DrawManager.getShapeRenderer().end();
-
-        spriteBatch.begin();
-        for (int i = 0; i < GameInstance.Airport().getVehicleCount(); i++) {
-            Vehicle vehicle = GameInstance.Airport().getVehicle(i);
-            DrawManager.draw(spriteBatch, vehicle);
-        }
-
-        for (int i = 0; i < GameInstance.Airport().getBuildingCount(); i++) {
-            Building building = GameInstance.Airport().getBuilding(i);
-            DrawManager.draw(spriteBatch, building);
-        }
-
-        for (int i = 0; i < GameInstance.Airport().getAirplaneCount(); i++) {
-            Airplane airplane = GameInstance.Airport().getAirplane(i);
-            DrawManager.draw(spriteBatch, airplane);
-        }
-        spriteBatch.end();
 //        System.out.println("Rendercalls: " + spriteBatch.renderCalls);
 
 
@@ -137,10 +195,12 @@ public class GameScreen implements Screen {
     private void handleInput() {
         float move = 100;
         float zoom = 4f;
-        float x, y;
         if (Gdx.input.justTouched()) {
-            x = Gdx.input.getX();
-            y = Gdx.input.getY();
+
+//            screenPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
+//
+//            worldPos.set(camera.unproject(screenPos));
+
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
@@ -172,6 +232,12 @@ public class GameScreen implements Screen {
 
     }
 
+    public void setTouched(float screenX, float screenY){
+        screenPos.set(screenX, screenY, 0);
+        worldPos.set(camera.unproject(screenPos));
+        handler.OnTouch(worldPos.x, worldPos.y);
+    }
+
     public void zoomCamera(float zoom, float factor) {
         zoom = Math.max(Settings.Instance().minZoom, Math.min(zoom, Settings.Instance().maxZoom));
         camera.zoom = zoom;
@@ -198,6 +264,8 @@ public class GameScreen implements Screen {
         screenWidth = width;
         screenHeight = height;
 
+        uiManager.resize(width, height);
+
       /*
       This resize code will ensure that the window is filled with world. The camera position will be maintained during
       the resize so that whatever it was looking at isn't suddenly displaced or off screen altogether.
@@ -223,12 +291,13 @@ public class GameScreen implements Screen {
 
     @Override
     public void hide() {
-
+        //save
     }
 
     @Override
     public void dispose() {
-
+        spriteBatch.dispose();
+        uiManager.dispose();
     }
 
     public OrthographicCamera getCamera() {
