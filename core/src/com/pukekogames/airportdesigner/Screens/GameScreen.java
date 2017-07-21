@@ -104,6 +104,8 @@ public class GameScreen implements Screen {
 
         camera.zoom = 1000;
         camera.update();
+        camera.viewportWidth = 640;
+        camera.viewportWidth = 480;
     }
 
     @Override

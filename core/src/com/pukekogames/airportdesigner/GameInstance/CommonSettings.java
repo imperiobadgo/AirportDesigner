@@ -31,8 +31,8 @@ public class CommonSettings implements Serializable {
     public int RenderDepth = 10;
     public PointInt screenSize = new PointInt(1280, 720);
     public int buttonReactionShowTime = 10;
-    public int ButtonWidth = 200;
-    public int ButtonHeight = 50;
+    public int ButtonWidth = 100;
+    public int ButtonHeight = 20;
     public boolean shouldUpdateRoadMap = true;
     public float airportShift = 1;
     public float shiftPerTick = 0.08f;

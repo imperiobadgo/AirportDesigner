@@ -56,16 +56,21 @@ public class UiManager {
 
     public void setup() {
         skin = new Skin(Gdx.files.internal("ui\\uiskin.json"));
+
+        final float buttonWidth = GameInstance.Settings().ButtonWidth * Gdx.graphics.getPpcX() / 25;
+        final float buttonHeight = GameInstance.Settings().ButtonHeight * Gdx.graphics.getPpcY() / 25;
 //        skin = new Skin();
 
 //        skin.addRegions(main.assets.get("ui\\uiskin.atlas", TextureAtlas.class));
         skin.add("default-font", main.font);
 //        skin.load(Gdx.files.internal("ui\\uiskin.json"));
 
+
         screenStage = new Stage(new StretchViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
+
         gameStage = new Stage(new ScreenViewport());
         table = new Table();
-        table.setWidth(screenStage.getWidth());
+        table.setWidth(Gdx.graphics.getWidth());
         table.align(Align.center | Align.top);
         table.setPosition(0, Gdx.graphics.getHeight());
 
@@ -89,10 +94,24 @@ public class UiManager {
 //        button.setWidth(30);
 //        button.setHeight(30);
 
-        table.padTop(30);
-        table.add(startButton).padBottom(30);
+        table.padTop(buttonHeight / 5);
+        table.add(startButton).width(buttonWidth).height(buttonHeight).padBottom(buttonHeight / 5);
         table.row();
-        table.add(quitButton);
+        table.add(quitButton).width(buttonWidth).height(buttonHeight);
+
+        final Main.ExitDialog dialog = new Main.ExitDialog("", skin);
+
+
+        quitButton.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+			    GameInstance.Airport().setPauseSimulation(true);
+                dialog.show(screenStage);
+
+			}
+		});
+
+
 
 //        gameStage.addActor(button);
         screenStage.addActor(table);
@@ -145,7 +164,9 @@ public class UiManager {
 
     void createCircleButtons(GameObject object, int mx, int my) {
 
-        int circleButtonDiameter = GameInstance.Settings().circleButtonWidth;
+        int circleButtonDiameter = (int) (GameInstance.Settings().circleButtonWidth * Gdx.graphics.getPpcX() / 70f);
+
+        buttonCircle.setRadius((int) (circleButtonDiameter * 1.2f));
 
         if (object instanceof StreetVehicle) {
             final StreetVehicle vehicle = (StreetVehicle) object;
