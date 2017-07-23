@@ -258,13 +258,13 @@ public class Handler {
             }
         }
 
-//        if (!hasSomethingClicked) {
-//            setSelected(null);
+        if (!hasSomethingClicked) {
+            setSelected(null);
 //            if (uiManager.removeSelectionButton().isEnabled()) {
 //                selectableGameObjects.clear();
 //            }
-//            uiManager.removeCircleButtons();
-//        }
+            uiManager.removeCircleButtons();
+        }
         if (!hasSomethingClicked && doubleTouch) {
 
             if (lastTouchDistance < 40) {

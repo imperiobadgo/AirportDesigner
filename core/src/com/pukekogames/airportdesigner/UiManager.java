@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
@@ -18,7 +19,9 @@ import com.pukekogames.airportdesigner.Objects.ButtonCircle;
 import com.pukekogames.airportdesigner.Objects.GameObject;
 import com.pukekogames.airportdesigner.Objects.Vehicles.Airplane;
 import com.pukekogames.airportdesigner.Objects.Vehicles.StreetVehicle;
+import com.pukekogames.airportdesigner.Screens.ExitDialog;
 import com.pukekogames.airportdesigner.Screens.GameScreen;
+import com.pukekogames.airportdesigner.Screens.SaveDialog;
 
 /**
  * Created by Marko Rapka on 13.07.2017.
@@ -39,6 +42,7 @@ public class UiManager {
     private Skin skin;
     private Stage screenStage;
     private Table table;
+    private Table constructionTable;
 
     private Stage gameStage;
 
@@ -59,6 +63,10 @@ public class UiManager {
 
         final float buttonWidth = GameInstance.Settings().ButtonWidth * Gdx.graphics.getPpcX() / 25;
         final float buttonHeight = GameInstance.Settings().ButtonHeight * Gdx.graphics.getPpcY() / 25;
+        int circleButtonDiameter = (int) (GameInstance.Settings().circleButtonWidth * Gdx.graphics.getPpcX() / 100f);
+        if (GameInstance.Settings().isStartedOnMobile){
+            circleButtonDiameter *= 2f;
+        }
 //        skin = new Skin();
 
 //        skin.addRegions(main.assets.get("ui\\uiskin.atlas", TextureAtlas.class));
@@ -70,13 +78,14 @@ public class UiManager {
 
         gameStage = new Stage(new ScreenViewport());
         table = new Table();
-        table.setWidth(Gdx.graphics.getWidth());
-        table.align(Align.center | Align.top);
-        table.setPosition(0, Gdx.graphics.getHeight());
+        table.setFillParent(true);
+//        table.align(Align.center | Align.top);
+        table.align(Align.right | Align.top);
+//        table.setPosition(0, Gdx.graphics.getHeight());
+//        table.setDebug(true);
+        constructionTable = new Table();
 
 
-        TextButton startButton = new TextButton("Start Game", skin);
-        TextButton quitButton = new TextButton("Quit Game", skin);
 
         Drawable background = new SpriteDrawable(new Sprite(TextureLoader.Instance().getTexture(TextureLoader.indexCircleButtonBackground)));
         Drawable backgroundDown = new SpriteDrawable(new Sprite(TextureLoader.Instance().getTexture(TextureLoader.indexCircleButtonBackgroundClicked)));
@@ -94,27 +103,150 @@ public class UiManager {
 //        button.setWidth(30);
 //        button.setHeight(30);
 
-        table.padTop(buttonHeight / 5);
-        table.add(startButton).width(buttonWidth).height(buttonHeight).padBottom(buttonHeight / 5);
+//        ImageButton.ImageButtonStyle buildStyle = new ImageButton.ImageButtonStyle(standardStyle);
+//        Drawable buildImage = new SpriteDrawable(new Sprite(TextureLoader.Instance().getTexture(TextureLoader.indexButtonBuild)));
+//
+//        buildStyle.imageUp = buildImage;
+//        buildStyle.imageDown = buildImage;
+//        buildStyle.imageChecked = buildImage;
+//
+//        ImageButton buildButton = new ImageButton(buildStyle);
+
+        ImageButton buildButton = getButton(TextureLoader.indexButtonBuild);
+
+        buildButton.setHeight(circleButtonDiameter);
+        buildButton.setWidth(circleButtonDiameter);
+
+        buildButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+
+            }
+        });
+
+        ImageButton optionButton = getButton(TextureLoader.indexOptionButton);
+
+        optionButton.setHeight(circleButtonDiameter);
+        optionButton.setWidth(circleButtonDiameter);
+
+        final SaveDialog saveDialog = new SaveDialog(main,screenStage, "", skin);
+
+        optionButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                GameInstance.Airport().setPauseSimulation(true);
+                saveDialog.show(screenStage);
+            }
+        });
+
+        ImageButton constructionButton = getButton(TextureLoader.indexButtonConstruct);
+
+        constructionButton.setHeight(circleButtonDiameter);
+        constructionButton.setWidth(circleButtonDiameter);
+
+        constructionButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                boolean wasVisible = constructionTable.isVisible();
+                constructionTable.setVisible(!wasVisible);
+                Touchable t;
+                if (constructionTable.isVisible()){
+                    t = Touchable.enabled;
+                }else{
+                    t = Touchable.disabled;
+                }
+                constructionTable.setTouchable(t);
+            }
+        });
+
+        ImageButton changeModeButton = getButton(TextureLoader.indexButtonBuildRoad);
+
+        changeModeButton.setHeight(circleButtonDiameter);
+        changeModeButton.setWidth(circleButtonDiameter);
+
+        changeModeButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+
+            }
+        });
+
+
+        ImageButton buildBuildingButton = getButton(TextureLoader.indexButtonBuildDepot);
+
+        buildBuildingButton.setHeight(circleButtonDiameter);
+        buildBuildingButton.setWidth(circleButtonDiameter);
+
+        buildBuildingButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+
+            }
+        });
+
+        ImageButton deleteRoadbutton = getButton(TextureLoader.indexButtonDelete);
+
+        deleteRoadbutton.setHeight(circleButtonDiameter);
+        deleteRoadbutton.setWidth(circleButtonDiameter);
+
+        deleteRoadbutton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+
+            }
+        });
+
+        float padding = circleButtonDiameter / 2f;
+        if (GameInstance.Settings().isStartedOnMobile){
+            padding = circleButtonDiameter / 4f;
+        }
+        table.defaults().padRight(padding);
+        table.add(constructionTable);
+
+        constructionTable.add(changeModeButton).padRight(padding);
+        constructionTable.add(buildBuildingButton).padRight(padding);
+        constructionTable.add(deleteRoadbutton);
+
+        table.add(optionButton).padBottom(padding);
         table.row();
-        table.add(quitButton).width(buttonWidth).height(buttonHeight);
+        table.add();
+        table.add(constructionButton);
 
-        final Main.ExitDialog dialog = new Main.ExitDialog("", skin);
 
-
-        quitButton.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-			    GameInstance.Airport().setPauseSimulation(true);
-                dialog.show(screenStage);
-
-			}
-		});
-
+//        TextButton startButton = new TextButton("Start Game", skin);
+//        TextButton quitButton = new TextButton("Quit Game", skin);
+//
+//        table.padTop(buttonHeight / 5);
+//        table.add(startButton).width(buttonWidth).height(buttonHeight).padBottom(buttonHeight / 5);
+//
+//        table.add(quitButton).width(buttonWidth).height(buttonHeight);
+//
+//        final ExitDialog dialog = new ExitDialog("", skin);
+//
+//
+//        quitButton.addListener(new ClickListener() {
+//			@Override
+//			public void clicked(InputEvent event, float x, float y) {
+//			    GameInstance.Airport().setPauseSimulation(true);
+//                dialog.show(screenStage);
+//
+//			}
+//		});
 
 
 //        gameStage.addActor(button);
         screenStage.addActor(table);
+    }
+
+    private ImageButton getButton(int textureId) {
+        ImageButton.ImageButtonStyle buildStyle = new ImageButton.ImageButtonStyle(standardStyle);
+        Drawable buildImage = new SpriteDrawable(new Sprite(TextureLoader.Instance().getTexture(textureId)));
+
+        buildStyle.imageUp = buildImage;
+        buildStyle.imageDown = buildImage;
+        buildStyle.imageChecked = buildImage;
+
+        return new ImageButton(buildStyle);
     }
 
     public void tick(float delta) {
@@ -158,7 +290,7 @@ public class UiManager {
         buttonCircle.clearButtons();
     }
 
-    public void projectVector(Vector3 vector){
+    public void projectVector(Vector3 vector) {
         gameScreen.getCamera().project(vector);
     }
 

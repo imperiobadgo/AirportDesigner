@@ -31,7 +31,7 @@ public class CommonSettings implements Serializable {
     public int RenderDepth = 10;
     public PointInt screenSize = new PointInt(1280, 720);
     public int buttonReactionShowTime = 10;
-    public int ButtonWidth = 100;
+    public int ButtonWidth = 200;
     public int ButtonHeight = 20;
     public boolean shouldUpdateRoadMap = true;
     public float airportShift = 1;
@@ -57,6 +57,7 @@ public class CommonSettings implements Serializable {
     transient public ClickableGameObject selectedObject;
     public boolean CollisionDetection = true;
     public boolean DebugMode = false;
+    public boolean isStartedOnMobile = false;
 
     public int maxTime = 6000;
 

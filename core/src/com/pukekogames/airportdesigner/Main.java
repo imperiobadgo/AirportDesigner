@@ -22,6 +22,7 @@ import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.pukekogames.airportdesigner.GameInstance.GameInstance;
 import com.pukekogames.airportdesigner.Screens.GameScreen;
+import com.pukekogames.airportdesigner.Screens.MainMenuScreen;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -156,7 +157,7 @@ public class Main extends Game {
 //		Gdx.input.setInputProcessor(im);
 
 //		setScreen(new SplashScreen(this));
-		setScreen(new GameScreen(this));
+		setScreen(new MainMenuScreen(this));
 	}
 
 	@Override
@@ -226,56 +227,5 @@ public class Main extends Game {
 
 	public Stage getGameStage(){
 		return gameStage;
-	}
-
-
-	public static class ExitDialog extends Dialog{
-
-		public ExitDialog(String title, Skin skin) {
-			super(title, skin);
-		}
-
-		public ExitDialog(String title, Skin skin, String windowStyleName) {
-			super(title, skin, windowStyleName);
-		}
-
-		public ExitDialog(String title, WindowStyle windowStyle) {
-			super(title, windowStyle);
-		}
-
-		{
-			padTop(60); // set padding on top of the dialog title
-			getButtonTable().defaults().height(60).pad(0,20,0,20); // set buttons height
-			getButtonTable().defaults().width(200);
-			setModal(true);
-			setMovable(false);
-			text("Do you quit?uzfuztfdtzdrtdhrs");
-			button("Yes", "Yes");
-			button("No", "No");
-
-		}
-
-		@Override
-		public float getPrefWidth() {
-			// force dialog width
-			return 640f;
-		}
-
-		@Override
-		public float getPrefHeight() {
-			// force dialog height
-			return 320f;
-		}
-
-		@Override
-		protected void result(Object object) {
-			super.result(object);
-			if (object.equals("Yes")){
-				Gdx.app.exit();
-			}else if(object.equals("No")){
-				GameInstance.Airport().setPauseSimulation(false);
-			}
-
-		}
 	}
 }
