@@ -110,7 +110,7 @@ public class SaveDialog extends Dialog {
                 if (GameSave.Instance().gameInstances[selectedSlot] == null) {
                     saveAirport();
                 } else {
-                    if (GameSave.Instance().gameInstances[selectedSlot].equals(GameInstance.Instance())) {
+                    if (!GameSave.Instance().gameInstances[selectedSlot].equals(GameInstance.Instance())) {
 
                         dialog.show(callerStage);
 
@@ -139,6 +139,7 @@ public class SaveDialog extends Dialog {
         GameSave.Instance().currentSlot = currentSlot;
         setCurrentSaveText();
         GameSave.Instance().gameInstances[currentSlot] = GameInstance.Instance();
+        GameInstance.Airport().setPauseSimulation(true);
     }
 
     void loadAirport() {
@@ -147,6 +148,7 @@ public class SaveDialog extends Dialog {
         setCurrentSaveText();
         GameInstance.setGameInstance(GameSave.Instance().gameInstances[currentSlot]);
         CommonMethods.loadAllObjectReferences(GameInstance.Airport());
+        GameInstance.Airport().setPauseSimulation(true);
     }
 
     private void setCurrentSaveText() {

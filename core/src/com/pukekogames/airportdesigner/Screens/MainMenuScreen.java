@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
+import com.pukekogames.airportdesigner.Helper.GameStart;
 
 /**
  * Created by Marko Rapka on 08.06.2017.
@@ -83,7 +84,12 @@ public class MainMenuScreen implements Screen {
         loadAirportButton.setY(currentY);
         loadAirportButton.setWidth(BUTTON_WIDTH);
         loadAirportButton.setHeight(BUTTON_HEIGHT);
-
+        loadAirportButton.addListener( new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                main.setScreen( new GameScreen(main, GameStart.Load) );
+            }
+        } );
         stage.addActor(loadAirportButton);
 
         // button "start new airport"
@@ -95,7 +101,7 @@ public class MainMenuScreen implements Screen {
         startNewAirportButton.addListener( new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                main.setScreen( new GameScreen(main) );
+                main.setScreen( new GameScreen(main, GameStart.New) );
             }
         } );
         stage.addActor(startNewAirportButton);
@@ -106,6 +112,12 @@ public class MainMenuScreen implements Screen {
         debugAirportButton.setY(currentY -= BUTTON_HEIGHT + BUTTON_SPACING);
         debugAirportButton.setWidth(BUTTON_WIDTH);
         debugAirportButton.setHeight(BUTTON_HEIGHT);
+        debugAirportButton.addListener( new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                main.setScreen( new GameScreen(main, GameStart.Debug) );
+            }
+        } );
         stage.addActor(debugAirportButton);
 
         TextButton exitButton = new TextButton("Exit", normalSkin);
