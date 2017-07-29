@@ -1,6 +1,8 @@
 package com.pukekogames.airportdesigner;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
@@ -14,14 +16,19 @@ import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.*;
 import com.pukekogames.airportdesigner.GameInstance.GameInstance;
+import com.pukekogames.airportdesigner.Helper.ClassTranslation.BuildingType;
+import com.pukekogames.airportdesigner.Helper.ClassTranslation.RoadType;
+import com.pukekogames.airportdesigner.Helper.CommonMethods;
 import com.pukekogames.airportdesigner.Objects.Buildings.Depot;
 import com.pukekogames.airportdesigner.Objects.ButtonCircle;
 import com.pukekogames.airportdesigner.Objects.GameObject;
+import com.pukekogames.airportdesigner.Objects.RoadIntersection;
+import com.pukekogames.airportdesigner.Objects.Roads.*;
 import com.pukekogames.airportdesigner.Objects.Vehicles.Airplane;
 import com.pukekogames.airportdesigner.Objects.Vehicles.StreetVehicle;
-import com.pukekogames.airportdesigner.Screens.ExitDialog;
-import com.pukekogames.airportdesigner.Screens.GameScreen;
-import com.pukekogames.airportdesigner.Screens.SaveDialog;
+import com.pukekogames.airportdesigner.Screens.*;
+
+import java.util.ArrayList;
 
 /**
  * Created by Marko Rapka on 13.07.2017.
@@ -33,6 +40,7 @@ public class UiManager {
 
     private Main main;
     private GameScreen gameScreen;
+    private Handler handler;
 
     public static Vector3 screenPos;
     public static Vector3 worldPos;
@@ -43,8 +51,19 @@ public class UiManager {
     private Stage screenStage;
     private Table table;
     private Table constructionTable;
+    private Table infoTable;
+    private Label moneyLabel;
+    private Label levelLabel;
+    private Label modeLabel;
+    private Label gameSpeedLabel;
+    private Label timeLabel;
+
 
     private Stage gameStage;
+
+    private ImageButton removeSelectionButton;
+    private ImageButton buildRoadButton;
+    private TextButton gameSpeedButton;
 
     public UiManager(Main main, GameScreen gameScreen) {
         this.main = main;
@@ -56,6 +75,11 @@ public class UiManager {
         screenPos = new Vector3();
         worldPos = new Vector3();
         buttonCircle = new ButtonCircle(this);
+        Settings.Instance().uiManager = this;
+    }
+
+    public void setHandler(Handler handler) {
+        this.handler = handler;
     }
 
     public void setup() {
@@ -64,7 +88,7 @@ public class UiManager {
         final float buttonWidth = GameInstance.Settings().ButtonWidth * Gdx.graphics.getPpcX() / 25;
         final float buttonHeight = GameInstance.Settings().ButtonHeight * Gdx.graphics.getPpcY() / 25;
         int circleButtonDiameter = (int) (GameInstance.Settings().circleButtonWidth * Gdx.graphics.getPpcX() / 100f);
-        if (GameInstance.Settings().isStartedOnMobile){
+        if (GameInstance.Settings().isStartedOnMobile) {
             circleButtonDiameter *= 2f;
         }
 //        skin = new Skin();
@@ -80,11 +104,11 @@ public class UiManager {
         table = new Table();
         table.setFillParent(true);
 //        table.align(Align.center | Align.top);
-        table.align(Align.right | Align.top);
+//        table.align(Align.right | Align.top);
 //        table.setPosition(0, Gdx.graphics.getHeight());
 //        table.setDebug(true);
         constructionTable = new Table();
-
+        infoTable = new Table();
 
 
         Drawable background = new SpriteDrawable(new Sprite(TextureLoader.Instance().getTexture(TextureLoader.indexCircleButtonBackground)));
@@ -112,24 +136,12 @@ public class UiManager {
 //
 //        ImageButton buildButton = new ImageButton(buildStyle);
 
-        ImageButton buildButton = getButton(TextureLoader.indexButtonBuild);
-
-        buildButton.setHeight(circleButtonDiameter);
-        buildButton.setWidth(circleButtonDiameter);
-
-        buildButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-
-            }
-        });
-
         ImageButton optionButton = getButton(TextureLoader.indexOptionButton);
 
         optionButton.setHeight(circleButtonDiameter);
         optionButton.setWidth(circleButtonDiameter);
 
-        final SaveDialog saveDialog = new SaveDialog(main,screenStage, "", skin);
+        final SaveDialog saveDialog = new SaveDialog(main, screenStage, "", skin);
 
         optionButton.addListener(new ClickListener() {
             @Override
@@ -139,7 +151,7 @@ public class UiManager {
             }
         });
 
-        ImageButton constructionButton = getButton(TextureLoader.indexButtonConstruct);
+        ImageButton constructionButton = getButton(TextureLoader.indexButtonBuild);
 
         constructionButton.setHeight(circleButtonDiameter);
         constructionButton.setWidth(circleButtonDiameter);
@@ -150,24 +162,39 @@ public class UiManager {
                 boolean wasVisible = constructionTable.isVisible();
                 constructionTable.setVisible(!wasVisible);
                 Touchable t;
-                if (constructionTable.isVisible()){
+                switchBuild(0);
+                if (constructionTable.isVisible()) {
                     t = Touchable.enabled;
-                }else{
+                    GameInstance.Airport().setPauseSimulation(true);
+                } else {
                     t = Touchable.disabled;
                 }
                 constructionTable.setTouchable(t);
             }
         });
-
-        ImageButton changeModeButton = getButton(TextureLoader.indexButtonBuildRoad);
+        constructionTable.setVisible(false);
+        constructionTable.setTouchable(Touchable.disabled);
+        final ImageButton changeModeButton = getButton(TextureLoader.indexButtonBuildRoad);
 
         changeModeButton.setHeight(circleButtonDiameter);
         changeModeButton.setWidth(circleButtonDiameter);
+
+        ArrayList<String> classNamesList = new ArrayList<>();
+
+        classNamesList.add("Taxiway");
+        classNamesList.add("Runway");
+        classNamesList.add("Street");
+        classNamesList.add("ParkGate");
+
+        final RoadListDialog roadListDialog = new RoadListDialog(main, classNamesList, "", skin);
 
         changeModeButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
 
+                GameInstance.Airport().setPauseSimulation(true);
+                roadListDialog.show(screenStage);
+                switchBuild(1);
             }
         });
 
@@ -177,10 +204,33 @@ public class UiManager {
         buildBuildingButton.setHeight(circleButtonDiameter);
         buildBuildingButton.setWidth(circleButtonDiameter);
 
+        ArrayList<String> buildingClassList = new ArrayList<>();
+
+        buildingClassList.add("CrewBusDepot");
+        buildingClassList.add("BusDepot");
+        buildingClassList.add("BaggageDepot");
+        buildingClassList.add("TankDepot");
+        buildingClassList.add("CateringDepot");
+
+        if (GameInstance.Settings().level >= 3) {
+            buildingClassList.add("Terminal");
+        }
+        if (GameInstance.Settings().level > 4 && GameInstance.Airport().getTower() == null) {
+            buildingClassList.add("Tower");
+        }
+
+        final DepotListDialog depotListDialog = new DepotListDialog(main, buildingClassList, "", skin);
+
         buildBuildingButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
 
+
+                depotListDialog.show(screenStage);
+
+                switchBuild(3);
+//                changeModeButton.setTouchable(Touchable.disabled);
+//                changeModeButton.setVisible(false);
             }
         });
 
@@ -192,26 +242,104 @@ public class UiManager {
         deleteRoadbutton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                switchBuild(2);
+            }
+        });
 
+        removeSelectionButton = getButton(TextureLoader.indexButtonCancel);
+        removeSelectionButton.setHeight(circleButtonDiameter);
+        removeSelectionButton.setWidth(circleButtonDiameter);
+        removeSelectionButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                clearSelectableObjects();
+            }
+        });
+
+
+        buildRoadButton = getButton(TextureLoader.indexButtonConstruct);
+        buildRoadButton.setHeight(circleButtonDiameter);
+        buildRoadButton.setWidth(circleButtonDiameter);
+
+        setupBuildRoadButton();
+
+        BitmapFont boldFont = new BitmapFont(Gdx.files.internal("ArialBasic.fnt"), Gdx.files.internal("ArialBasic.png"), false);
+
+        Label.LabelStyle boldStyle = new Label.LabelStyle(boldFont, Color.BLACK);
+        boldStyle.font.getData().setScale(1.5f);
+
+        Label.LabelStyle style = new Label.LabelStyle(main.font, Color.BLACK);
+
+        moneyLabel = new Label("Test", boldStyle);
+        levelLabel = new Label("Test", style);
+        modeLabel = new Label("Test", style);
+        gameSpeedLabel = new Label("Test", style);
+        timeLabel = new Label("Test", style);
+
+        Drawable drawable = skin.getDrawable("default-rect-pad");
+
+
+        TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle(drawable, drawable, drawable, main.font);
+        gameSpeedButton = new TextButton("test", textButtonStyle);
+        gameSpeedButton.setHeight(30f);
+        gameSpeedButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (GameInstance.Settings().gameSpeed == 1) {
+                    GameInstance.Settings().gameSpeed = 2;
+                } else if (GameInstance.Settings().gameSpeed == 2) {
+                    GameInstance.Settings().gameSpeed = 5;
+                } else if (GameInstance.Settings().gameSpeed == 5) {
+                    GameInstance.Settings().gameSpeed = 10;
+                } else {
+                    GameInstance.Settings().gameSpeed = 1;
+                }
+            }
+        });
+
+        TextButton debugButton = new TextButton("Debug", textButtonStyle);
+        debugButton.setHeight(30f);
+        debugButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                GameInstance.Settings().DebugMode = !GameInstance.Settings().DebugMode;
             }
         });
 
         float padding = circleButtonDiameter / 2f;
-        if (GameInstance.Settings().isStartedOnMobile){
+        if (GameInstance.Settings().isStartedOnMobile) {
             padding = circleButtonDiameter / 4f;
         }
         table.defaults().padRight(padding);
-        table.add(constructionTable);
+        table.add(infoTable).left().top();
+        table.add(constructionTable).right().top().expandX();
+
+        infoTable.add(moneyLabel).left().padRight(30f);
+        infoTable.add(timeLabel).row();
+        infoTable.add(levelLabel).left().row();
+        infoTable.add(modeLabel).left().row();
+        infoTable.add(gameSpeedButton).left().row();
+        infoTable.add(debugButton).left().row();
 
         constructionTable.add(changeModeButton).padRight(padding);
         constructionTable.add(buildBuildingButton).padRight(padding);
         constructionTable.add(deleteRoadbutton);
 
-        table.add(optionButton).padBottom(padding);
+        table.add(optionButton).padBottom(padding).right().align(Align.top | Align.right);
         table.row();
         table.add();
-        table.add(constructionButton);
+        table.add();
+        table.add(constructionButton).align(Align.top | Align.right);
+        table.row().expandY();
 
+        table.add(removeSelectionButton).align(Align.left | Align.bottom);
+        table.add();
+        table.add();
+
+        table.row();
+        table.add(buildRoadButton).align(Align.left | Align.bottom).padBottom(100f);
+        table.add();
+        table.add();
 
 //        TextButton startButton = new TextButton("Start Game", skin);
 //        TextButton quitButton = new TextButton("Quit Game", skin);
@@ -236,6 +364,68 @@ public class UiManager {
 
 //        gameStage.addActor(button);
         screenStage.addActor(table);
+        switchBuild(0);
+    }
+
+    private void setupBuildRoadButton() {
+        buildRoadButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (handler.buildRoad != null) {
+                    if (handler.intersectPoints.size() > 0 || handler.buildCost == 0) {
+//                        Toast toast = Toast.makeText(game, R.string.Building_Collision_Toast, Toast.LENGTH_SHORT);
+//                        toast.show();
+                        return;
+                    }
+
+                    if (handler.buildRoad instanceof Runway) {
+                        if (handler.buildRoad.getLength() < 4000) {
+//                            Toast toast = Toast.makeText(game, R.string.Building_RunwayToShort_Toast, Toast.LENGTH_SHORT);
+//                            toast.show();
+                            return;
+                        }
+                    }
+//                    if (buildRoad instanceof ParkGate) {
+//                        if (buildRoad.getLength() < 1200) {
+//                            Toast toast = Toast.makeText(game, R.string.Building_ParkGateToShort_Toast, Toast.LENGTH_SHORT);
+//                            toast.show();
+//                            return;
+//                        }
+//                    }
+
+                    //money check
+                    if (GameInstance.Instance().removeMoney(handler.buildCost)) {
+                        RoadIntersection intersection = null;
+                        boolean shouldAddIntersection = true;
+                        for (int i = 0; i < GameInstance.Airport().getRoadIntersectionCount(); i++) {
+                            RoadIntersection tempIntersection = GameInstance.Airport().getRoadIntersection(i);
+                            double distance = CommonMethods.getDistance(tempIntersection.getPosition(), handler.buildIntersection.getPosition());
+                            if (distance < 0.1) {
+                                intersection = tempIntersection;
+                                shouldAddIntersection = false;
+                                break;
+                            }
+                        }
+
+                        if (shouldAddIntersection) {
+
+                            intersection = new RoadIntersection(handler.buildIntersection.getPosition());
+
+                            GameInstance.Airport().AddRoadIntersection(intersection);//to prevent referencing to the changeable buildingRoadIntersection
+                        }
+                        handler.buildRoad.setNext(intersection);
+                        GameInstance.Airport().AddRoad(handler.buildRoad);
+
+                        handler.buildRoad = null;
+                        handler.firstRoadIntersection = null;
+                        setSelectableRoadIntersections(null);
+                    } else {
+//                        Toast toast = Toast.makeText(game, R.string.Building_NotEnoughMoney_Toast, Toast.LENGTH_SHORT);
+//                        toast.show();
+                    }
+                }
+            }
+        });
     }
 
     private ImageButton getButton(int textureId) {
@@ -247,6 +437,12 @@ public class UiManager {
         buildStyle.imageChecked = buildImage;
 
         return new ImageButton(buildStyle);
+    }
+
+    public void clearSelectableObjects() {
+        handler.clearSelectableObjects();
+        removeSelectionButton.setVisible(false);
+        removeSelectionButton.setTouchable(Touchable.disabled);
     }
 
     public void tick(float delta) {
@@ -266,6 +462,16 @@ public class UiManager {
             removeCircleButtons();
         }
 
+        long money = GameInstance.Instance().getMoney();
+        moneyLabel.setText(String.format("%1$d Euro", money));
+
+        int hour = GameInstance.Instance().getHour();
+        int minute = GameInstance.Instance().getMinute();
+        timeLabel.setText(String.format("%02d", hour) + ":" + String.format("%02d", minute));
+        levelLabel.setText(String.format("Level %1$d", GameInstance.Settings().level));
+        modeLabel.setText(String.format("Mode %1$d", GameInstance.Settings().buildMode));
+        gameSpeedLabel.setText(String.format("GS %1$d", GameInstance.Settings().gameSpeed));
+        gameSpeedButton.setText(String.format("GS %1$d", GameInstance.Settings().gameSpeed));
 //        Airplane airplane = GameInstance.Airport().getAirplane(0);
 //        if (airplane != null) {
 //            worldPos.set(airplane.getX(), airplane.getY(), 0);
@@ -303,57 +509,43 @@ public class UiManager {
         if (object instanceof StreetVehicle) {
             final StreetVehicle vehicle = (StreetVehicle) object;
 
-//            if (GameInstance.Settings().CollisionDetection && GameInstance.Settings().DebugMode) {
+            if (GameInstance.Settings().CollisionDetection && GameInstance.Settings().DebugMode) {
 
-            removeCircleButtons();
-            buttonCircle.setObject(vehicle);
+                removeCircleButtons();
+                buttonCircle.setObject(vehicle);
 
-            ImageButton.ImageButtonStyle deleteStyle = new ImageButton.ImageButtonStyle(standardStyle);
-            Drawable deleteImage = new SpriteDrawable(new Sprite(TextureLoader.Instance().getTexture(TextureLoader.indexButtonDelete)));
+                ImageButton deleteButton = getButton(TextureLoader.indexButtonDelete);
 
-            deleteStyle.imageUp = deleteImage;
-            deleteStyle.imageDown = deleteImage;
-            deleteStyle.imageChecked = deleteImage;
+                deleteButton.setHeight(circleButtonDiameter);
+                deleteButton.setWidth(circleButtonDiameter);
 
-            ImageButton deleteButton = new ImageButton(deleteStyle);
+                deleteButton.addListener(new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        GameInstance.Airport().RemoveVehicle(vehicle);
+                        removeCircleButtons();
+                    }
+                });
 
-            deleteButton.setHeight(circleButtonDiameter);
-            deleteButton.setWidth(circleButtonDiameter);
+                buttonCircle.addButton(deleteButton);
+                gameStage.addActor(deleteButton);
 
-            deleteButton.addListener(new ClickListener() {
-                @Override
-                public void clicked(InputEvent event, float x, float y) {
-                    GameInstance.Airport().RemoveVehicle(vehicle);
-                    removeCircleButtons();
-                }
-            });
+                ImageButton ignoreCollisionButton = getButton(TextureLoader.indexOptionButton);
 
-            buttonCircle.addButton(deleteButton);
-            gameStage.addActor(deleteButton);
+                ignoreCollisionButton.setHeight(circleButtonDiameter);
+                ignoreCollisionButton.setWidth(circleButtonDiameter);
 
-            ImageButton.ImageButtonStyle ignoreCollisionStyle = new ImageButton.ImageButtonStyle(standardStyle);
-            Drawable ignoreCollisionImage = new SpriteDrawable(new Sprite(TextureLoader.Instance().getTexture(TextureLoader.indexOptionButton)));
+                ignoreCollisionButton.addListener(new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        vehicle.IgnoreCollision();
+                    }
+                });
 
-            ignoreCollisionStyle.imageUp = ignoreCollisionImage;
-            ignoreCollisionStyle.imageDown = ignoreCollisionImage;
-            ignoreCollisionStyle.imageChecked = ignoreCollisionImage;
+                buttonCircle.addButton(ignoreCollisionButton);
+                gameStage.addActor(ignoreCollisionButton);
 
-            ImageButton ignoreCollisionButton = new ImageButton(ignoreCollisionStyle);
-
-            ignoreCollisionButton.setHeight(circleButtonDiameter);
-            ignoreCollisionButton.setWidth(circleButtonDiameter);
-
-            ignoreCollisionButton.addListener(new ClickListener() {
-                @Override
-                public void clicked(InputEvent event, float x, float y) {
-                    vehicle.IgnoreCollision();
-                }
-            });
-
-            buttonCircle.addButton(ignoreCollisionButton);
-            gameStage.addActor(ignoreCollisionButton);
-
-//            }
+            }
 
         }
         if (object instanceof Depot) {
@@ -363,14 +555,7 @@ public class UiManager {
             removeCircleButtons();
             buttonCircle.setObject(depot);
 
-            ImageButton.ImageButtonStyle infoStyle = new ImageButton.ImageButtonStyle(standardStyle);
-            Drawable infoImage = new SpriteDrawable(new Sprite(TextureLoader.Instance().getTexture(TextureLoader.indexCircleButtonInfo)));
-
-            infoStyle.imageUp = infoImage;
-            infoStyle.imageDown = infoImage;
-            infoStyle.imageChecked = infoImage;
-
-            ImageButton infoButton = new ImageButton(infoStyle);
+            ImageButton infoButton = getButton(TextureLoader.indexCircleButtonInfo);
 
             infoButton.setHeight(circleButtonDiameter);
             infoButton.setWidth(circleButtonDiameter);
@@ -403,6 +588,305 @@ public class UiManager {
         if (object instanceof Airplane) {
             final Airplane plane = (Airplane) object;
 
+            removeCircleButtons();
+            buttonCircle.setObject(plane);
+            if (GameInstance.Settings().DebugMode) {
+                ImageButton deleteButton = getButton(TextureLoader.indexButtonDelete);
+
+                deleteButton.setHeight(circleButtonDiameter);
+                deleteButton.setWidth(circleButtonDiameter);
+
+                deleteButton.addListener(new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        GameInstance.Airport().RemoveVehicle(plane);
+                        removeCircleButtons();
+                    }
+                });
+
+                buttonCircle.addButton(deleteButton);
+                gameStage.addActor(deleteButton);
+            }
+
+            if (GameInstance.Settings().CollisionDetection && GameInstance.Settings().DebugMode) {
+
+                ImageButton ignoreCollisionButton = getButton(TextureLoader.indexOptionButton);
+
+                ignoreCollisionButton.setHeight(circleButtonDiameter);
+                ignoreCollisionButton.setWidth(circleButtonDiameter);
+
+                ignoreCollisionButton.addListener(new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        plane.IgnoreCollision();
+                    }
+                });
+
+                buttonCircle.addButton(ignoreCollisionButton);
+                gameStage.addActor(ignoreCollisionButton);
+            }
+
+            switch (plane.getState()) {
+
+                case Init:
+                    break;
+                case Waiting:
+                    break;
+                case Arrival:
+                    break;
+                case Landing:
+                    break;
+                case WaitingForGate:
+
+                case ReadyForPushback:
+
+                    ImageButton goToTarget = getButton(TextureLoader.indexCircleButtonGoto);
+                    goToTarget.setHeight(circleButtonDiameter);
+                    goToTarget.setWidth(circleButtonDiameter);
+
+                    goToTarget.addListener(new ClickListener() {
+                        @Override
+                        public void clicked(InputEvent event, float x, float y) {
+                            clearSelectableObjects();
+                            handler.selectableGameObjects.addAll(plane.getPossibleTargets());
+                            handler.choiceForThis = plane;
+                            if (handler.selectableGameObjects.size() > 0) {
+                                removeSelectionButton.setTouchable(Touchable.enabled);
+                                removeSelectionButton.setVisible(true);
+                            }
+                            removeCircleButtons();
+                        }
+                    });
+
+                    buttonCircle.addButton(goToTarget);
+                    screenStage.addActor(goToTarget);
+                    break;
+
+                case ArrivedAtGate:
+                case Boarding:
+                    if (plane.isServiceNotPossible()) {
+                        goToTarget = getButton(TextureLoader.indexCircleButtonGoto);
+                        goToTarget.setHeight(circleButtonDiameter);
+                        goToTarget.setWidth(circleButtonDiameter);
+
+                        goToTarget.addListener(new ClickListener() {
+                            @Override
+                            public void clicked(InputEvent event, float x, float y) {
+                                clearSelectableObjects();
+                                handler.selectableGameObjects.addAll(plane.getPossibleTargets());
+                                handler.choiceForThis = plane;
+                                if (handler.selectableGameObjects.size() > 0) {
+                                    removeSelectionButton.setTouchable(Touchable.enabled);
+                                    removeSelectionButton.setVisible(true);
+                                }
+                                removeCircleButtons();
+                            }
+                        });
+
+                        buttonCircle.addButton(goToTarget);
+                        screenStage.addActor(goToTarget);
+                    }
+                    break;
+
+                case Pushback:
+                    break;
+                case TaxiToGate:
+                case TaxiToRunway:
+                    ImageButton toggleHoldPosition = getButton(TextureLoader.indexCircleButtonHold);
+                    toggleHoldPosition.setHeight(circleButtonDiameter);
+                    toggleHoldPosition.setWidth(circleButtonDiameter);
+
+                    toggleHoldPosition.addListener(new ClickListener() {
+                        @Override
+                        public void clicked(InputEvent event, float x, float y) {
+                            plane.setHoldPosition(!plane.isHoldPosition());
+                        }
+                    });
+
+                    buttonCircle.addButton(toggleHoldPosition);
+                    screenStage.addActor(toggleHoldPosition);
+                    break;
+
+                case ReadyForDeparture:
+                    ImageButton clearedForDepartureButton = getButton(TextureLoader.indexCircleButtonTakeOff);
+                    clearedForDepartureButton.setHeight(circleButtonDiameter);
+                    clearedForDepartureButton.setWidth(circleButtonDiameter);
+
+                    clearedForDepartureButton.addListener(new ClickListener() {
+                        @Override
+                        public void clicked(InputEvent event, float x, float y) {
+                            for (RoadIntersection intersection : plane.getPossibleTargets()) {
+                                plane.searchRoute(intersection);
+                                break;
+                            }
+                            plane.setHoldPosition(false);
+                            buttonCircle.setCooldown();
+                        }
+                    });
+
+                    buttonCircle.addButton(clearedForDepartureButton);
+                    screenStage.addActor(clearedForDepartureButton);
+                    break;
+                case ClearedForDeparture:
+                    break;
+                case Takeoff:
+                    break;
+                case Departure:
+                    break;
+            }
+
+        }
+
+    }
+
+    public void setSelectableRoadIntersections(RoadIntersection lastIntersection) {
+        handler.selectableGameObjects.clear();
+        for (int i = 0; i < GameInstance.Airport().getRoadIntersectionCount(); i++) {
+            RoadIntersection intersection = GameInstance.Airport().getRoadIntersection(i);
+
+            if (intersection.equals(lastIntersection)) continue;//dont add selected intersection
+
+            Road[] roadArray = intersection.getRoadArray();
+
+            if (GameInstance.Settings().buildRoad == null) {
+                GameInstance.Settings().buildRoad = RoadType.None;
+            }
+
+            switch (GameInstance.Settings().buildRoad) {
+
+                case None:
+                    break;
+
+                case taxiway:
+                    boolean noTaxiwayOrRunway = true;
+                    for (int j = 0; j < roadArray.length; j++) {
+                        Road connectedRoad = roadArray[j];
+                        if (connectedRoad instanceof Taxiway || connectedRoad instanceof Runway) {
+                            noTaxiwayOrRunway = false;
+                            break;
+                        }
+                    }
+                    if (noTaxiwayOrRunway) {
+                        continue;
+                    }
+                    break;
+
+                case runway:
+                    boolean noTaxiway = true;
+                    for (int j = 0; j < roadArray.length; j++) {
+                        Road connectedRoad = roadArray[j];
+                        if (connectedRoad instanceof Runway) {
+                            noTaxiway = true;
+                            break;
+                        }
+                        if (connectedRoad instanceof Taxiway) {
+                            noTaxiway = false;
+                        }
+                    }
+                    if (noTaxiway) {
+                        continue;
+                    }
+                    break;
+
+                case street:
+                    boolean noStreet = true;
+                    for (int j = 0; j < roadArray.length; j++) {
+                        Road connectedRoad = roadArray[j];
+                        if (connectedRoad instanceof Street) {
+                            noStreet = false;
+                            break;
+                        }
+                        if (connectedRoad instanceof ParkGate && connectedRoad.getNext().equals(intersection)) {
+                            noStreet = false;
+                            break;
+                        }
+                    }
+                    if (noStreet) {
+                        continue;
+                    }
+                    break;
+
+                case parkGate:
+
+                    boolean noTaxiwayForGate = true;
+                    for (int j = 0; j < roadArray.length; j++) {
+                        Road connectedRoad = roadArray[j];
+                        if (connectedRoad instanceof ParkGate || connectedRoad instanceof Runway) {
+                            noTaxiwayForGate = true;
+                            break;
+                        }
+                        if (handler.buildRoad == null && connectedRoad instanceof Taxiway) {
+                            noTaxiwayForGate = false;
+                        }
+                        if (handler.buildRoad != null && connectedRoad instanceof Street) {
+                            noTaxiwayForGate = false;
+                        }
+                    }
+                    if (noTaxiwayForGate) {
+                        continue;
+                    }
+                    break;
+                default:
+
+            }
+
+            handler.selectableGameObjects.add(intersection);
+        }
+    }
+
+    void switchBuild(int newBuild) {
+        clearSelectableObjects();
+        removeCircleButtons();
+//
+//        //reset buttons
+        buildRoadButton.setVisible(false);
+        buildRoadButton.setTouchable(Touchable.disabled);
+//        showNextAirplanesButton.setEnabled(false);
+//        showNextAirplanesButton.setNoVisual(true);
+        switch (newBuild) {
+            case 1:
+                GameInstance.Airport().setPauseSimulation(true);
+                GameInstance.Settings().buildMode = 1;
+                buildRoadButton.setVisible(true);
+                buildRoadButton.setTouchable(Touchable.enabled);
+
+                setSelectableRoadIntersections(null);
+                break;
+            case 2:
+                GameInstance.Settings().buildMode = 2;
+                GameInstance.Airport().setPauseSimulation(true);
+
+                gameScreen.getHandler().setAllDeletableObjects();
+
+                break;
+            case 3:
+                GameInstance.Settings().buildMode = 3;
+                GameInstance.Airport().setPauseSimulation(true);
+                handler.selectableGameObjects.clear();
+
+                gameScreen.getHandler().setSelectableObjectsForBuildBuilding();
+
+                for (int i = 0; i < GameInstance.Airport().getRoadCount(); i++) {
+                    Road road = GameInstance.Airport().getRoad(i);
+                    if (road.getLength() > GameInstance.Settings().buildMinRadius * 1.2 && road instanceof Street && road.getBuilding() == null)
+                        handler.selectableGameObjects.add(road);
+                }
+                break;
+            default:
+//                showNextAirplanesButton.setEnabled(true);
+//                showNextAirplanesButton.setNoVisual(false);
+
+                GameInstance.Settings().buildMode = newBuild;
+                GameInstance.Settings().buildRoad = RoadType.None;
+                GameInstance.Settings().buildDepot = BuildingType.None;
+                GameInstance.Settings().selectionCompleted = false;
+                GameInstance.Settings().buildPrice = 0L;
+                gameScreen.getHandler().selectableGameObjects.clear();
+                gameScreen.getHandler().firstRoadIntersection = null;
+                gameScreen.getHandler().buildRoad = null;
+                GameInstance.Airport().setPauseSimulation(false);
+                GameInstance.Airport().CheckGateServicePossibility();
+                break;
         }
 
     }
@@ -420,6 +904,7 @@ public class UiManager {
     }
 
     public void resize(int width, int height) {
+        GameInstance.Settings().screenSize.set(width,height);
         screenStage.getViewport().update(width, height);
         gameStage.getViewport().update(width, height);
     }
@@ -435,5 +920,9 @@ public class UiManager {
 
     public Stage getGameStage() {
         return gameStage;
+    }
+
+    public GameScreen getGameScreen(){
+        return gameScreen;
     }
 }

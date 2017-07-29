@@ -2,8 +2,10 @@ package com.pukekogames.airportdesigner;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.pukekogames.airportdesigner.Drawing.DrawAirport;
 import com.pukekogames.airportdesigner.Drawing.DrawManager;
 import com.pukekogames.airportdesigner.Drawing.DrawRoads;
+import com.pukekogames.airportdesigner.GameInstance.Airport;
 import com.pukekogames.airportdesigner.GameInstance.GameInstance;
 import com.pukekogames.airportdesigner.Helper.BuildingHelper;
 import com.pukekogames.airportdesigner.Helper.ChangeValues;
@@ -21,6 +23,7 @@ import com.pukekogames.airportdesigner.Objects.ClickableGameObject;
 import com.pukekogames.airportdesigner.Objects.GameObject;
 import com.pukekogames.airportdesigner.Objects.RoadIntersection;
 import com.pukekogames.airportdesigner.Objects.Roads.Road;
+import com.pukekogames.airportdesigner.Objects.Roads.Runway;
 import com.pukekogames.airportdesigner.Objects.Roads.Street;
 import com.pukekogames.airportdesigner.Objects.Roads.Taxiway;
 import com.pukekogames.airportdesigner.Objects.Vehicles.Airplane;
@@ -138,7 +141,7 @@ public class Handler {
 //                        PointInt tablePos = mouseToTablePos((int) x, (int) y);
                         BuildingHelper.calcBuildPos((int) x, (int) y, firstRoadIntersection, buildIntersection, lines, intersectPoints);
                         buildRoad.updatePosition();
-//                        uiManager.setSelectableRoadIntersections(intersection);
+                        uiManager.setSelectableRoadIntersections(intersection);
 
 //                        }
                     }
@@ -231,7 +234,7 @@ public class Handler {
                         if (clickedObject instanceof RoadIntersection) {
                             RoadIntersection intersection = (RoadIntersection) clickedObject;
                             plane.searchRoute(intersection);
-//                            uiManager.clearSelectableObjects();
+                            uiManager.clearSelectableObjects();
                         }
                     }
                 }
@@ -354,7 +357,7 @@ public class Handler {
 
         if (GameInstance.Settings().buildRoadSelected) {
             GameInstance.Settings().buildRoadSelected = false;
-//            uiManager.setSelectableRoadIntersections(null);
+            uiManager.setSelectableRoadIntersections(null);
         }
 
         for (Object airportObject : GameInstance.Airport().getClickableObjects()) {
@@ -409,49 +412,7 @@ public class Handler {
 
     public void draw(SpriteBatch batch) {
 
-        DrawManager.getShapeRenderer().begin(ShapeRenderer.ShapeType.Filled);
-        for (int i = 0; i < GameInstance.Airport().getRoadIntersectionCount(); i++) {
-            RoadIntersection roadIntersection = GameInstance.Airport().getRoadIntersection(i);
-            DrawManager.draw(batch, roadIntersection);
-        }
-        DrawManager.getShapeRenderer().end();
-
-        batch.begin();
-        batch.disableBlending();
-        for (int i = 0; i < GameInstance.Airport().getRoadCount(); i++) {
-            Road road = GameInstance.Airport().getRoad(i);
-            DrawManager.draw(batch, road);
-
-        }
-        batch.enableBlending();
-        batch.end();
-
-
-        DrawManager.getShapeRenderer().begin(ShapeRenderer.ShapeType.Line);
-        for (int i = 0; i < GameInstance.Airport().getRoadCount(); i++) {
-            Road road = GameInstance.Airport().getRoad(i);
-            DrawRoads.drawLines(batch, road);
-
-        }
-//        DrawRoads.drawLines(spriteBatch, GameInstance.Airport().getRoad(0));
-        DrawManager.getShapeRenderer().end();
-
-        batch.begin();
-        for (int i = 0; i < GameInstance.Airport().getVehicleCount(); i++) {
-            Vehicle vehicle = GameInstance.Airport().getVehicle(i);
-            DrawManager.draw(batch, vehicle);
-        }
-
-        for (int i = 0; i < GameInstance.Airport().getBuildingCount(); i++) {
-            Building building = GameInstance.Airport().getBuilding(i);
-            DrawManager.draw(batch, building);
-        }
-
-        for (int i = 0; i < GameInstance.Airport().getAirplaneCount(); i++) {
-            Airplane airplane = GameInstance.Airport().getAirplane(i);
-            DrawManager.draw(batch, airplane);
-        }
-
+        DrawAirport.Instance().draw(batch, GameInstance.Airport());
 
         if (GameInstance.Settings().buildMode == 1) {
 
@@ -463,13 +424,19 @@ public class Handler {
             }
             if (buildRoad != null && buildIntersection != null && GameInstance.Settings().buildRoad != RoadType.None) {
 
+                DrawManager.getShapeRenderer().begin(ShapeRenderer.ShapeType.Filled);
                 DrawManager.draw(batch, buildIntersection);
-                DrawManager.drawPossibleSelection(batch, buildIntersection);
+                DrawManager.getShapeRenderer().end();
 
+                DrawManager.getShapeRenderer().begin(ShapeRenderer.ShapeType.Line);
+                DrawManager.drawPossibleSelection(batch, buildIntersection);
+                DrawManager.getShapeRenderer().end();
 //                Render.render(canvas, paint, buildIntersection);
 //                Render.drawPossibleSelection(canvas, paint, buildIntersection);
 
+                batch.begin();
                 DrawManager.draw(batch, buildRoad);
+                batch.end();
 
 //                Render.render(canvas, paint, buildRoad);
 //                RenderGui.drawBuildCost(canvas, paint, buildCost, buildRoad);
@@ -488,15 +455,30 @@ public class Handler {
 //                }
             }
         }
-        batch.end();
+
+
+        DrawManager.getShapeRenderer().begin(ShapeRenderer.ShapeType.Filled);
+        for (ClickableGameObject clickableGameObject : selectableGameObjects) {
+            if (clickableGameObject instanceof Building || clickableGameObject instanceof RoadIntersection) continue;
+            DrawManager.drawPossibleSelection(batch, clickableGameObject);
+        }
+        if (selected != null) {
+            if (!(selected instanceof Building || selected instanceof RoadIntersection)) {
+                DrawManager.drawPossibleSelection(batch, selected);
+            }
+        }
+        DrawManager.getShapeRenderer().end();
 
         DrawManager.getShapeRenderer().begin(ShapeRenderer.ShapeType.Line);
         for (ClickableGameObject clickableGameObject : selectableGameObjects) {
-            DrawManager.drawPossibleSelection(batch, clickableGameObject);
-//            Render.drawPossibleSelection(canvas, paint, clickableGameObject);
+            if (clickableGameObject instanceof Building || clickableGameObject instanceof RoadIntersection) {
+                DrawManager.drawPossibleSelection(batch, clickableGameObject);
+            }
         }
         if (selected != null) {
-            DrawManager.drawPossibleSelection(batch, selected);
+            if (selected instanceof Building || selected instanceof RoadIntersection) {
+                DrawManager.drawPossibleSelection(batch, selected);
+            }
         }
         DrawManager.getShapeRenderer().end();
 
@@ -715,9 +697,11 @@ public class Handler {
 
 //        PointInt centerPos = buildIntersection.getPositionForRender(Align_X + width / 2, Align_Y + height / 2);
 
-        PointInt centerPos = GameObject.getPositionForRender(buildIntersection.getPosition().x - buildOffset.x, buildIntersection.getPosition().y - buildOffset.y);
-        int diffX = centerPos.x - lastMousePosition.x;
-        int diffY = centerPos.y - lastMousePosition.y;
+        int x = Math.round(buildIntersection.getPosition().x - buildOffset.x);
+        int y = Math.round(buildIntersection.getPosition().y - buildOffset.y);
+
+        int diffX = x - lastMousePosition.x;
+        int diffY = y - lastMousePosition.y;
         double distance = Math.sqrt(Math.pow(diffX, 2) + Math.pow(diffY, 2));
 //        float zoom = GameInstance.Settings().Zoom * GameInstance.Settings().Scale;
 //        float radius = zoom * 2000;//should be outside the check and snapradius
@@ -730,9 +714,10 @@ public class Handler {
     }
 
     private float saftyDistance() {
-        float zoom = GameInstance.Settings().Zoom * GameInstance.Settings().Scale;
-        float radius = zoom * 2000;//should be outside the check and snapradius
-        return radius;
+//        float zoom = GameInstance.Settings().Zoom * GameInstance.Settings().Scale;
+//        float radius = zoom * 2000;//should be outside the check and snapradius
+//        return radius;
+        return 2000;
     }
 
 //    public boolean dontDragWorld() {

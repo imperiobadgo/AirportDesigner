@@ -49,6 +49,7 @@ public class GameScreen implements Screen {
         camera = new OrthographicCamera();
         uiManager = new UiManager(main, this);
         handler = new Handler(main, uiManager);
+        uiManager.setHandler(handler);
         screenPos = new Vector3();
         worldPos = new Vector3();
     }
@@ -240,6 +241,11 @@ public class GameScreen implements Screen {
         handler.OnTouch(worldPos.x, worldPos.y);
     }
 
+    public Vector3 unproject(float screenX, float screenY){
+        screenPos.set(screenX, screenY, 0);
+        return  worldPos.set(camera.unproject(screenPos));
+    }
+
     public void zoomCamera(float zoom, float factor) {
         zoom = Math.max(Settings.Instance().minZoom, Math.min(zoom, Settings.Instance().maxZoom));
         camera.zoom = zoom;
@@ -265,6 +271,7 @@ public class GameScreen implements Screen {
 
         screenWidth = width;
         screenHeight = height;
+
 
         uiManager.resize(width, height);
 
@@ -306,4 +313,11 @@ public class GameScreen implements Screen {
         return camera;
     }
 
+    public Handler getHandler() {
+        return handler;
+    }
+
+    public UiManager getUiManager() {
+        return uiManager;
+    }
 }

@@ -1,5 +1,10 @@
 package com.pukekogames.airportdesigner;
 
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.Vector3;
+import com.pukekogames.airportdesigner.Screens.GameScreen;
+
 /**
  * Created by Marko Rapka on 26.05.2016.
  */
@@ -30,6 +35,7 @@ public class Settings {
 //    public Game game;
 
     public boolean isShowingDialog = false;
+    public UiManager uiManager;
 
     //Fonts
     public int normalFontSize = 15;
@@ -38,7 +44,7 @@ public class Settings {
 
 
     //Colors
-//    public int attentionColor = Color.rgb(255,150,20);
+    public Color attentionColor = new Color(1f,0.588f,0.078f, 1f);
 //    public int selectedColor = Color.BLUE;
 //    public int possibleSelectionColor = Color.CYAN;
 //    public int fontColor = Color.BLACK;

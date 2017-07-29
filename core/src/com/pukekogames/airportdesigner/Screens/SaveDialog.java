@@ -1,11 +1,14 @@
 package com.pukekogames.airportdesigner.Screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.pukekogames.airportdesigner.GameInstance.GameInstance;
 import com.pukekogames.airportdesigner.Helper.Command;
 import com.pukekogames.airportdesigner.Helper.CommonMethods;
@@ -49,7 +52,17 @@ public class SaveDialog extends Dialog {
         getButtonTable().defaults().width(300);
         setModal(true);
         setMovable(false);
-        final List list = new List(getSkin());
+
+        BitmapFont font = new BitmapFont(Gdx.files.internal("ArialBasic.fnt"), Gdx.files.internal("ArialBasic.png"), false);
+
+        if (GameInstance.Settings().isStartedOnMobile){
+            font.getData().setScale(1.8f);
+        }
+
+        Drawable drawable =  getSkin().getDrawable("default-rect-pad");
+
+        List.ListStyle style = new List.ListStyle(font, Color.CYAN, Color.WHITE, drawable);
+        final List list = new List(style);
         label = new Label("", getSkin());
 
         ArrayList<String> myStringArray = new ArrayList<String>();
@@ -150,7 +163,7 @@ public class SaveDialog extends Dialog {
     @Override
     public float getPrefHeight() {
         // force dialog height
-        return 480f;
+        return 600f;
     }
 
     @Override

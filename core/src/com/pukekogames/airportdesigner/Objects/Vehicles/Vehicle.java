@@ -531,6 +531,10 @@ public abstract class Vehicle extends ClickableGameObject {
         this.centerPos = centerPos;
     }
 
+    public void setCenterPos(float x, float y){
+        centerPos.set(x, y);
+    }
+
     public Road getCurrentRoad() {
         return currentRoad;
     }

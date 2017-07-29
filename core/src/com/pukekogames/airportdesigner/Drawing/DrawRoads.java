@@ -91,10 +91,20 @@ public class DrawRoads {
     }
 
     public static void drawLines(SpriteBatch batch, Road road) {
-        if (!(road instanceof Taxiway)) return;
         ShapeRenderer renderer = DrawManager.getShapeRenderer();
-        renderer.setColor(Color.GOLD);
-        renderer.line(road.getStartPosition().x, road.getStartPosition().y, road.getEndPosition().x, road.getEndPosition().y);
+        if (road instanceof Taxiway) {
+
+            renderer.setColor(Color.GOLD);
+            int width = 20;
+            renderer.rectLine(road.getStartPosition().x, road.getStartPosition().y, road.getEndPosition().x, road.getEndPosition().y, width);
+
+        }
+        if (road.isUserWantsDemolition()) {
+
+            renderer.setColor(Color.RED);
+            int width = 40;
+            renderer.rectLine(road.getStartPosition().x, road.getStartPosition().y, road.getEndPosition().x, road.getEndPosition().y, width);
+        }
 
 //        renderer.setColor(Color.BLACK);
 //        Vector2 perp = new Vector2(road.getDirY(), -road.getDirX());
@@ -129,13 +139,15 @@ public class DrawRoads {
 
         Vector2 perp = new Vector2(road.getDirY(), -road.getDirX());
 
+        int width = 20;
+
         //oben
         renderer.rectLine(road.getStartPosition().x + perp.x * road.getHeight() / 2, road.getStartPosition().y + perp.y * road.getHeight() / 2,
-                road.getEndPosition().x + perp.x * road.getHeight() / 2, road.getEndPosition().y + perp.y * road.getHeight() / 2, 2);
+                road.getEndPosition().x + perp.x * road.getHeight() / 2, road.getEndPosition().y + perp.y * road.getHeight() / 2, width);
 
         //unten
         renderer.rectLine(road.getStartPosition().x - perp.x * road.getHeight() / 2, road.getStartPosition().y - perp.y * road.getHeight() / 2,
-                road.getEndPosition().x - perp.x * road.getHeight() / 2, road.getEndPosition().y - perp.y * road.getHeight() / 2,2);
+                road.getEndPosition().x - perp.x * road.getHeight() / 2, road.getEndPosition().y - perp.y * road.getHeight() / 2,width);
 //        renderer.circle(road.getCenterPosition().x, road.getCenterPosition().y, radius);
     }
 }

@@ -58,11 +58,16 @@ public class GestureHandler implements GestureDetector.GestureListener {
     public boolean pan(float x, float y, float deltaX, float deltaY) {
         GameScreen screen = getGameScreen();
         if (screen != null) {
-            OrthographicCamera camera = screen.getCamera();
-            float magicPanFactor = camera.zoom / 30;// just happen to be 30(than the mouse sticks to the ground when moving)
+            Vector3 worldPos = screen.unproject(x, y);
 
-            camera.translate(-deltaX * magicPanFactor, -deltaY * magicPanFactor);
+            if (screen.getHandler().isDraggingBuildIntersection(worldPos.x,worldPos.y)) {
+                screen.getHandler().touchMoved(worldPos.x,worldPos.y);
+            } else {
+                OrthographicCamera camera = screen.getCamera();
+                float magicPanFactor = camera.zoom / 30;// just happen to be 30(than the mouse sticks to the ground when moving)
 
+                camera.translate(-deltaX * magicPanFactor, -deltaY * magicPanFactor);
+            }
         }
 
         return false;
