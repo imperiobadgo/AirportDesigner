@@ -10,10 +10,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -23,6 +20,7 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.pukekogames.airportdesigner.GameInstance.GameInstance;
 import com.pukekogames.airportdesigner.Screens.GameScreen;
 import com.pukekogames.airportdesigner.Screens.MainMenuScreen;
+import com.pukekogames.airportdesigner.Screens.TimeTabelContent.TimeTableScreen;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -52,6 +50,7 @@ public class Main extends Game {
 	public void create () {
 		batch = new SpriteBatch();
 		assets = new AssetManager();
+		assets.load("airlines/icons.atlas", TextureAtlas.class);
 
 //		textures = new ArrayList<Texture>();
 //		textures.add(new Texture("airplane_a320.png"));
@@ -133,6 +132,7 @@ public class Main extends Game {
 //
 //		stage.addActor(table);
 
+        Label progressLabel = new Label("", skin);
 
 		final TextButton button = new TextButton("Click Me", skin, "default");
 		button.setWidth(200);
@@ -157,7 +157,25 @@ public class Main extends Game {
 //		Gdx.input.setInputProcessor(im);
 
 //		setScreen(new SplashScreen(this));
-		setScreen(new MainMenuScreen(this));
+
+//		try {
+//			logger.setLevel(Logger.DEBUG);
+//			Gdx.app.setLogLevel(Application.LOG_DEBUG);
+
+			Texture.setAssetManager(assets);
+//
+//			spriteBatch = new SpriteBatch();
+//			modelBatch = new ModelBatch();
+
+//			setScreen(new TimeTableScreen(this, skin));
+//		} catch (Exception e) {
+////			logger.error(e.getMessage(), e);
+//			System.out.println(e.getMessage());
+//			Gdx.app.exit();
+//		}
+
+
+//		setScreen(new MainMenuScreen(this));
 	}
 
 	@Override
@@ -167,10 +185,20 @@ public class Main extends Game {
 		gameStage.getViewport().update(width, height);
 	}
 
+	private boolean screenSet = false;
+
 	@Override
 	public void render () {
 		super.render();
 		float delta = Gdx.graphics.getDeltaTime();
+
+		if (assets.update()){
+            if (!screenSet) {
+                setScreen(new TimeTableScreen(this, skin));
+                screenSet = true;
+            }
+        }
+
 		stage.act(delta);
 		stage.draw();
 
