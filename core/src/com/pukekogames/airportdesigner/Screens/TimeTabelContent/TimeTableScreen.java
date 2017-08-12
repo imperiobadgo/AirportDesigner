@@ -29,9 +29,10 @@ public class TimeTableScreen implements Screen {
     public void show() {
         stage = new Stage();
         Gdx.input.setInputProcessor(stage);
-        DragAndDrop dragAndDrop = new DragAndDrop();
-        inventoryActor = new TimeRowWindow(main,this, new TimeRow(), dragAndDrop, skin);
-        stage.addActor(inventoryActor);
+        inventoryActor = new TimeRowWindow(main,this, skin);
+        inventoryActor.show(stage);
+
+//        stage.addActor(inventoryActor);
     }
 
     @Override
@@ -45,7 +46,8 @@ public class TimeTableScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
         if (Gdx.input.isKeyPressed(Input.Keys.ANY_KEY)) {
-            inventoryActor.setVisible(true);
+//            inventoryActor.setVisible(true);
+
         }
 
         stage.act(delta);

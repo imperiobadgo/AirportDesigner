@@ -153,4 +153,8 @@ public class Airline implements Serializable {
     public String getAirlineName() {
         return AirlineList.getAirlineName(id);
     }
+
+    public int getId() {
+        return id;
+    }
 }

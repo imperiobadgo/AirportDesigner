@@ -13,6 +13,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.pukekogames.airportdesigner.Helper.Alignment;
 import com.pukekogames.airportdesigner.Main;
+import com.pukekogames.airportdesigner.Objects.Airlines.Airline;
+import com.pukekogames.airportdesigner.Objects.Airlines.AirlineList;
 import com.pukekogames.airportdesigner.Objects.Airlines.PlannedArrival;
 
 /**
@@ -41,9 +43,9 @@ public class TimeSlotSource extends DragAndDrop.Source {
         TimeSlot payloadSlot = new TimeSlot(sourceSlot.getItem());
         sourceSlot.remove();
         payload.setObject(payloadSlot);
-
-        TextureAtlas icons = main.assets.get("airlines/icons.atlas", TextureAtlas.class);
-        TextureRegion icon = icons.findRegion("batterybase");
+        Airline airline = payloadSlot.getItem().getAirline();
+        TextureAtlas icons = main.assets.get("airlines/airlines.atlas", TextureAtlas.class);
+        TextureRegion icon = icons.findRegion(AirlineList.getAirlineFileName(airline.getId()));
 
 
         Actor dragActor = new Image(icon);
@@ -83,6 +85,7 @@ public class TimeSlotSource extends DragAndDrop.Source {
             if (targetSlot.getItem() == null) {
                 targetSlot.add(payloadSlot.getItem());
             } else {
+                sourceSlot.add(payloadSlot.getItem());
 //                PlannedArrival targetType = targetSlot.getItem();
 //                int targetAmount = targetSlot.getAmount();
 //                targetSlot.take(targetAmount);

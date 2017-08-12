@@ -31,7 +31,7 @@ public class DepotListDialog extends Dialog {
         this.content = content;
         padTop(30); // set padding on top of the dialog title
         float factor = 1;
-        if (GameInstance.Settings().isStartedOnMobile) {
+        if (Main.IS_STARTED_ON_MOBILE) {
             factor = 2;
         }
         getButtonTable().defaults().height(60 * factor).pad(0, 20, 10, 20); // set buttons height
@@ -41,7 +41,7 @@ public class DepotListDialog extends Dialog {
 
         BitmapFont font = new BitmapFont(Gdx.files.internal("ArialBasic.fnt"), Gdx.files.internal("ArialBasic.png"), false);
 
-        if (GameInstance.Settings().isStartedOnMobile) {
+        if (Main.IS_STARTED_ON_MOBILE) {
             font.getData().setScale(1.8f);
         }
 

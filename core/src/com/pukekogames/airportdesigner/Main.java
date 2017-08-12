@@ -2,30 +2,25 @@ package com.pukekogames.airportdesigner;
 
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.input.GestureDetector;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
-import com.pukekogames.airportdesigner.GameInstance.GameInstance;
-import com.pukekogames.airportdesigner.Screens.GameScreen;
-import com.pukekogames.airportdesigner.Screens.MainMenuScreen;
+import com.pukekogames.airportdesigner.Objects.Airlines.AirlineList;
 import com.pukekogames.airportdesigner.Screens.TimeTabelContent.TimeTableScreen;
 
 import java.util.ArrayList;
 import java.util.Random;
 
 public class Main extends Game {
+	public static boolean IS_STARTED_ON_MOBILE = false;
 	SpriteBatch batch;
 	ArrayList<Texture> textures;
 	private float rotation = 0f;
@@ -51,8 +46,9 @@ public class Main extends Game {
 		batch = new SpriteBatch();
 		assets = new AssetManager();
 		assets.load("airlines/icons.atlas", TextureAtlas.class);
+		assets.load("airlines/airlines.atlas", TextureAtlas.class);
 
-//		textures = new ArrayList<Texture>();
+		textures = new ArrayList<>();
 //		textures.add(new Texture("airplane_a320.png"));
 //		textures.add(new Texture("airplane_777.png"));
 //		textures.add(new Texture("airplane_cessna.png"));
@@ -62,6 +58,7 @@ public class Main extends Game {
 //		textures.add(new Texture("taxiway.jpg"));
 //		textures.add(new Texture("parkgate.jpg"));
 //		textures.add(new Texture("tower.png"));
+
 
 		random = new Random();
 
@@ -199,23 +196,23 @@ public class Main extends Game {
             }
         }
 
-		stage.act(delta);
-		stage.draw();
-
-		gameStage.act(delta);
-		gameStage.draw();
+//		stage.act(delta);
+//		stage.draw();
+//
+//		gameStage.act(delta);
+//		gameStage.draw();
 
 //		startTime = System.nanoTime();
 //
-//		Gdx.gl.glClearColor(1, 0, 0, 1);
+//		Gdx.gl.glClearColor(0, 0, 0, 1);
 //		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 //		batch.begin();
 //
+//
+////
 //		for (Texture tex : textures) {
-//			for (int i = 0; i < 200; i++) {
-//				batch.draw(tex, random.nextInt(1800), random.nextInt(800),tex.getWidth() / 2, tex.getHeight() / 2, tex.getWidth(), tex.getHeight(),
-//						1,1,rotation + random.nextFloat() * 180, 0,0,tex.getWidth(),tex.getHeight(),false, false);
-//			}
+//
+//				batch.draw(tex, 50, 200,tex.getWidth(), tex.getHeight(), 0,0, tex.getWidth(), tex.getHeight(),false, true);
 //		}
 //
 ////		for (int i = 0; i < 500; i++) {

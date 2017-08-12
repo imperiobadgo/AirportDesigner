@@ -4,6 +4,9 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.pukekogames.airportdesigner.GameInstance.GameInstance;
+import com.pukekogames.airportdesigner.Main;
+import com.pukekogames.airportdesigner.Settings;
 
 /**
  * Created by Marko Rapka on 31.07.2017.
@@ -17,11 +20,15 @@ public class TooltipListener extends InputListener {
 
     private Vector2 position = new Vector2();
     private Vector2 tmp = new Vector2();
-    private Vector2 offset = new Vector2(10, 10);
+    private Vector2 offset = new Vector2(-100, 50);
 
     public TooltipListener(Actor tooltip, boolean followCursor) {
         this.tooltip = tooltip;
         this.followCursor = followCursor;
+        if (Main.IS_STARTED_ON_MOBILE){
+            offset = new Vector2(-100, 100);
+            System.out.println("startet on mobile");
+        }
     }
 
     @Override

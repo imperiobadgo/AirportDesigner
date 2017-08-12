@@ -89,7 +89,7 @@ public class UiManager {
         final float buttonWidth = GameInstance.Settings().ButtonWidth * Gdx.graphics.getPpcX() / 25;
         final float buttonHeight = GameInstance.Settings().ButtonHeight * Gdx.graphics.getPpcY() / 25;
         int circleButtonDiameter = (int) (GameInstance.Settings().circleButtonWidth * Gdx.graphics.getPpcX() / 100f);
-        if (GameInstance.Settings().isStartedOnMobile) {
+        if (Main.IS_STARTED_ON_MOBILE) {
             circleButtonDiameter *= 2f;
         }
 //        skin = new Skin();
@@ -308,7 +308,7 @@ public class UiManager {
         });
 
         float padding = circleButtonDiameter / 2f;
-        if (GameInstance.Settings().isStartedOnMobile) {
+        if (Main.IS_STARTED_ON_MOBILE) {
             padding = circleButtonDiameter / 4f;
         }
         table.defaults().padRight(padding);

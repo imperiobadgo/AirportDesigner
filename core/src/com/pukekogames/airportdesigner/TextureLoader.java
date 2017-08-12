@@ -1,7 +1,14 @@
 package com.pukekogames.airportdesigner;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.pukekogames.airportdesigner.Objects.Images;
 
 import java.util.ArrayList;
@@ -35,7 +42,7 @@ public class TextureLoader {
     public static int indexButtonCancel = 86;
 
 
-    public void loadTextures(){
+    public void loadTextures() {
         textures[Images.indexAirplaneSmall] = new Texture(Gdx.files.internal("airplane_small.png"));
         textures[Images.indexAirplaneCessna] = new Texture(Gdx.files.internal("airplane_cessna.png"));
         textures[Images.indexAirplaneA320] = new Texture(Gdx.files.internal("airplane_a320.png"));
@@ -66,7 +73,7 @@ public class TextureLoader {
         textures[Images.indexTerminal] = new Texture(Gdx.files.internal("terminal.png"));
 
         textures[indexCircleButtonBackground] = new Texture(Gdx.files.internal("button_circlebackground.png"));
-        textures[indexCircleButtonBackgroundClicked] =new Texture(Gdx.files.internal("button_clickedcirclebackground.png"));
+        textures[indexCircleButtonBackgroundClicked] = new Texture(Gdx.files.internal("button_clickedcirclebackground.png"));
 
         textures[indexOptionButton] = new Texture(Gdx.files.internal("button_options.png"));
         textures[indexCircleButtonGoto] = new Texture(Gdx.files.internal("button_goto.png"));
@@ -83,8 +90,41 @@ public class TextureLoader {
         textures[indexButtonCancel] = new Texture(Gdx.files.internal("button_cancel.png"));
     }
 
-    public Texture getTexture(int textureIndex){
+    public Texture getTexture(int textureIndex) {
         if (textureIndex > 0 && textureIndex < textures.length) return textures[textureIndex];
         return null;
+    }
+
+    public static Texture createTextureWithText(String content, TextureRegion background, BitmapFont font, int width, int height, int textPositionX, int textPositionY) {
+        FrameBuffer fbo = new FrameBuffer(Pixmap.Format.RGBA8888, width, height, false);
+        OrthographicCamera cam = new OrthographicCamera();
+        cam.setToOrtho(true, width, height);
+        SpriteBatch batch = new SpriteBatch();
+        //make the FBO the current buffer
+        fbo.begin();
+
+//... clear the FBO color with transparent black ...
+//        Gdx.gl.glClearColor(0f, 0f, 0f, 0f); //transparent black
+        Gdx.gl.glClearColor(1f, 1f, 1f, 1f); //white background
+        Gdx.gl.glClear(Gdx.gl.GL_COLOR_BUFFER_BIT); //clear the color buffer
+        Gdx.gl.glBlendFuncSeparate(Gdx.gl.GL_SRC_ALPHA, Gdx.gl.GL_ONE_MINUS_SRC_ALPHA, Gdx.gl.GL_ONE, Gdx.gl.GL_ONE_MINUS_SRC_ALPHA);
+//since the FBO may not be the same size as the display,
+//we need to give the SpriteBatch our new screen dimensions
+
+        batch.setProjectionMatrix(cam.combined);
+//render some sprites
+        batch.begin();
+
+        batch.draw(background, 0, height / 4, width - width / 4, height - height / 4);
+        font.setColor(Color.BLACK);
+        font.draw(batch, content, textPositionX, textPositionY);
+
+        batch.end(); //flushes data to GL
+
+//now we can unbind the FBO, returning rendering back to the default back buffer (the Display)
+        fbo.end();
+
+        Texture tex = fbo.getColorBufferTexture();
+        return tex;
     }
 }

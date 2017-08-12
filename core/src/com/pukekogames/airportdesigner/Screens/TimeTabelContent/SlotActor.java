@@ -11,6 +11,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.pukekogames.airportdesigner.Main;
+import com.pukekogames.airportdesigner.Objects.Airlines.Airline;
+import com.pukekogames.airportdesigner.Objects.Airlines.AirlineList;
+import com.pukekogames.airportdesigner.TextureLoader;
 
 /**
  * Created by Marko Rapka on 31.07.2017.
@@ -39,17 +42,23 @@ public class SlotActor extends ImageButton implements SlotListener {
     }
 
     private static ImageButtonStyle createStyle(Main main, Skin skin, TimeSlot slot) {
-        TextureAtlas icons = main.assets.get("airlines/icons.atlas", TextureAtlas.class);
+        TextureAtlas icons = main.assets.get("airlines/airlines.atlas", TextureAtlas.class);
         TextureRegion image;
+        String content = "";
         if (slot.getItem() != null) {
-            image = icons.findRegion("batterybase");
+            Airline airline = slot.getItem().getAirline();
+            image = icons.findRegion(AirlineList.getAirlineFileName(airline.getId()));
+            content = slot.getItem().getCallSign();
         } else {
-            image = icons.findRegion("nothing");
+            image = icons.findRegion("airline");
         }
-
+        Texture tex = TextureLoader.createTextureWithText(content, image, main.font,128,128,5,30);
+        Drawable imageDrawable = new SpriteDrawable(new Sprite(tex));
         ImageButtonStyle style = new ImageButtonStyle(skin.get(ButtonStyle.class));
-        style.imageUp = new TextureRegionDrawable(image);
-        style.imageDown = new TextureRegionDrawable(image);
+        style.imageUp = imageDrawable;
+        style.imageDown = imageDrawable;
+//        style.imageUp = new TextureRegionDrawable(image);
+//        style.imageDown = new TextureRegionDrawable(image);
 
 //        Drawable image = new SpriteDrawable(new Sprite(new Texture("badlogic.jpg")));
 //        ImageButtonStyle style = new ImageButtonStyle(skin.get(ButtonStyle.class));

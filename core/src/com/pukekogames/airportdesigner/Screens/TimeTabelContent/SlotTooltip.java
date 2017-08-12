@@ -14,7 +14,7 @@ public class SlotTooltip extends Window implements SlotListener {
     private TimeSlot slot;
 
     public SlotTooltip(TimeSlot slot, Skin skin) {
-        super("Tooltip...", skin);
+        super("", skin);
         this.slot = slot;
         this.skin = skin;
         hasChanged(slot);
@@ -32,7 +32,7 @@ public class SlotTooltip extends Window implements SlotListener {
         // title displays the amount
 //        setTitle(slot.getAmount() + "x " + slot.getItem());
         clear();
-        Label label = new Label("Super awesome description of " + slot.getItem(), skin);
+        Label label = new Label(String.format("%1$d Uhr: %2$s %3$s",slot.getItem().getHour(),slot.getItem().getAirline().getAirlineName(), slot.getItem().getCallSign()), skin);
         add(label);
         pack();
     }

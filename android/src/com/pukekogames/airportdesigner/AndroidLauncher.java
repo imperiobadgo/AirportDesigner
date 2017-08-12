@@ -12,8 +12,9 @@ public class AndroidLauncher extends AndroidApplication {
 		super.onCreate(savedInstanceState);
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
 		config.hideStatusBar = true;
-		GameInstance.Settings().isStartedOnMobile = true;
-		initialize(new Main(), config);
+		Main main = new Main();
+		Main.IS_STARTED_ON_MOBILE = true;
+		initialize(main, config);
 
 	}
 }

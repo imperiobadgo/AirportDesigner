@@ -57,7 +57,6 @@ public class CommonSettings implements Serializable {
     transient public ClickableGameObject selectedObject;
     public boolean CollisionDetection = true;
     public boolean DebugMode = false;
-    public boolean isStartedOnMobile = false;
 
     public int maxTime = 6000;
 

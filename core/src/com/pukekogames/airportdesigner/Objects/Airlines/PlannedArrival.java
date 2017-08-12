@@ -99,6 +99,10 @@ public class PlannedArrival implements Serializable {
         this.callSign = callSign;
     }
 
+    public Airline getAirline(){
+        return airplane.getAirline();
+    }
+
     public boolean isAccepted() {
         return accepted;
     }
