@@ -8,12 +8,16 @@ import com.pukekogames.airportdesigner.Objects.Airlines.PlannedArrival;
  */
 public class TimeSlot {
 
+    private final int hour;
+    private final int gateIndex;
     private PlannedArrival item;
 
     private Array<SlotListener> slotListeners = new Array<SlotListener>();
 
-    public TimeSlot(PlannedArrival item) {
+    public TimeSlot(PlannedArrival item, int hour, int gateIndex) {
         this.item = item;
+        this.hour = hour;
+        this.gateIndex = gateIndex;
     }
 
     public boolean isEmpty() {
@@ -23,6 +27,8 @@ public class TimeSlot {
     public boolean add(PlannedArrival item) {
         if (this.item == item || this.item == null) {
             this.item = item;
+            item.setPlannedGateIndex(gateIndex);
+            item.setHour(hour);
             notifyListeners();
             return true;
         }
@@ -38,6 +44,10 @@ public class TimeSlot {
         }
 
         return false;
+    }
+
+    public int getHour() {
+        return hour;
     }
 
     public void addListener(SlotListener slotListener) {
@@ -57,6 +67,11 @@ public class TimeSlot {
     public PlannedArrival getItem() {
         return item;
     }
+
+    public int getGateIndex(){
+        return gateIndex;
+    }
+
 
     @Override
     public String toString() {

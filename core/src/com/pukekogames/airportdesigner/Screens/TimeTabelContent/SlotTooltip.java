@@ -32,7 +32,7 @@ public class SlotTooltip extends Window implements SlotListener {
         // title displays the amount
 //        setTitle(slot.getAmount() + "x " + slot.getItem());
         clear();
-        Label label = new Label(String.format("%1$d Uhr: %2$s %3$s",slot.getItem().getHour(),slot.getItem().getAirline().getAirlineName(), slot.getItem().getCallSign()), skin);
+        Label label = new Label(String.format("Gate %1$d    %2$d Uhr: \n %3$s %4$s", slot.getGateIndex() + 1, slot.getHour(), slot.getItem().getAirline().getAirlineName(), slot.getItem().getCallSign()), skin);
         add(label);
         pack();
     }

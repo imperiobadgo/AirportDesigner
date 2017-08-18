@@ -11,27 +11,30 @@ import com.pukekogames.airportdesigner.Objects.Airlines.PlannedArrival;
 public class TimeRow {
 
     private Array<TimeSlot> slots;
+    private int gateIndex;
 
-    public TimeRow() {
+    public TimeRow(int gateIndex) {
         slots = new Array<TimeSlot>(24);
+        this.gateIndex = gateIndex;
         for (int i = 0; i < 24; i++) {
-            slots.add(new TimeSlot(null));
+            slots.add(new TimeSlot(null, i, gateIndex));
         }
 
 //        // create some random items
 //        for (TimeSlot slot : slots) {
 //            slot.add(Item.values()[MathUtils.random(0, Item.values().length - 1)], 1);
 //        }
-        GameInstance.Settings().gameType = 1;
-        GameContent.setNewGame();
-        PlannedArrival[] arrivals = GameInstance.AirlineManager().getPlannedArrivals();
-        for (PlannedArrival arrival : arrivals) {
-            if (arrival.isAccepted()){
-                int hour = arrival.getHour();
-                TimeSlot slot = slots.get(hour);
-                slot.add(arrival);
-            }
-        }
+
+//        slots.get(arrivel.getHour()).add(arrivel);
+
+//        PlannedArrival[] arrivals = GameInstance.AirlineManager().getPlannedArrivals();
+//        for (PlannedArrival arrival : arrivals) {
+//            if (arrival.isAccepted()){
+//                int hour = arrival.getHour();
+//                TimeSlot slot = slots.get(hour);
+//                slot.add(arrival);
+//            }
+//        }
 
 //        // create a few random empty slots
 //        for (int i = 0; i < 3; i++) {

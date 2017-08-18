@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.pukekogames.airportdesigner.Objects.Airlines.AirlineList;
+import com.pukekogames.airportdesigner.Screens.MainMenuScreen;
 import com.pukekogames.airportdesigner.Screens.TimeTabelContent.TimeTableScreen;
 
 import java.util.ArrayList;
@@ -191,7 +192,8 @@ public class Main extends Game {
 
 		if (assets.update()){
             if (!screenSet) {
-                setScreen(new TimeTableScreen(this, skin));
+//                setScreen(new TimeTableScreen(this, skin));
+				setScreen(new MainMenuScreen(this));
                 screenSet = true;
             }
         }

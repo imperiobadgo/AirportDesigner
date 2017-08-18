@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -22,22 +23,21 @@ public class SlotActor extends ImageButton implements SlotListener {
 
     private final Main main;
     private TimeSlot slot;
-    private TimeTableScreen screen;
 
     private Skin skin;
 
-    public SlotActor(Main main, TimeTableScreen screen, Skin skin, TimeSlot slot) {
+    public SlotActor(Main main, Stage stage, Skin skin, TimeSlot slot) {
         super(createStyle(main, skin, slot));
         this.main = main;
         this.slot = slot;
         this.skin = skin;
-        this.screen = screen;
 
         slot.addListener(this);
 
         SlotTooltip tooltip = new SlotTooltip(slot, skin);
         tooltip.setTouchable(Touchable.disabled); // allows for mouse to hit tooltips in the top-right corner of the screen without flashing
-        screen.stage.addActor(tooltip);
+        stage.addActor(tooltip);
+//        slot.addListener(tooltip);
         addListener(new TooltipListener(tooltip, true));
     }
 

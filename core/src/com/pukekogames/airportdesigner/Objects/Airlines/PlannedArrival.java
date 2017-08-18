@@ -23,6 +23,7 @@ public class PlannedArrival implements Serializable {
     private TimeStamp time;
     private String callSign;
     private Airplane airplane;
+    private int plannedGateIndex;
     private ArrayList<Integer> lastTurnaroundTimeDiffs;
     private int lastTurnaraoundTimeDiff;
     private boolean accepted;
@@ -31,6 +32,7 @@ public class PlannedArrival implements Serializable {
     public PlannedArrival(int hour) {
         lastTurnaroundTimeDiffs = new ArrayList<>();
         generateTimeStemp(hour);
+        plannedGateIndex = -1;
 //        this.targetHour = hour;
 
     }
@@ -52,6 +54,7 @@ public class PlannedArrival implements Serializable {
 //        this.targetHour = hour;
 //        this.hour = hour;
         this.maxHourOffset = maxHourOffset;
+        plannedGateIndex = -1;
         setAirplane(airplane);
     }
 
@@ -170,6 +173,14 @@ public class PlannedArrival implements Serializable {
         float percentage = 1 - ((float) difference / (float) maxHourOffset);
 
         return percentage;
+    }
+
+    public int getPlannedGateIndex() {
+        return plannedGateIndex;
+    }
+
+    public void setPlannedGateIndex(int plannedGateIndex) {
+        this.plannedGateIndex = plannedGateIndex;
     }
 
     @Override

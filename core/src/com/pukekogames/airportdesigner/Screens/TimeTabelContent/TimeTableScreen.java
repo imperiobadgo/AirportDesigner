@@ -29,7 +29,7 @@ public class TimeTableScreen implements Screen {
     public void show() {
         stage = new Stage();
         Gdx.input.setInputProcessor(stage);
-        inventoryActor = new TimeRowWindow(main,this, skin);
+        inventoryActor = new TimeRowWindow(main,stage, skin);
         inventoryActor.show(stage);
 
 //        stage.addActor(inventoryActor);

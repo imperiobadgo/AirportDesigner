@@ -27,6 +27,7 @@ import com.pukekogames.airportdesigner.Objects.Roads.*;
 import com.pukekogames.airportdesigner.Objects.Vehicles.Airplane;
 import com.pukekogames.airportdesigner.Objects.Vehicles.StreetVehicle;
 import com.pukekogames.airportdesigner.Screens.*;
+import com.pukekogames.airportdesigner.Screens.TimeTabelContent.TimeRowWindow;
 import com.pukekogames.airportdesigner.Screens.TimeTabelContent.TimeTableScreen;
 
 import java.util.ArrayList;
@@ -147,8 +148,11 @@ public class UiManager {
         optionButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                GameInstance.Airport().setPauseSimulation(true);
-                saveDialog.show(screenStage);
+                if (!GameInstance.Airport().isPauseSimulation()) {
+                    GameInstance.Airport().setPauseSimulation(true);
+
+                    saveDialog.show(screenStage);
+                }
             }
         });
 
@@ -264,6 +268,25 @@ public class UiManager {
 
         setupBuildRoadButton();
 
+        final ImageButton timeTableButton = getButton(TextureLoader.indexCircleButtonTakeOff);
+
+        timeTableButton.setHeight(circleButtonDiameter);
+        timeTableButton.setWidth(circleButtonDiameter);
+
+//        final DepotListDialog depotListDialog = new DepotListDialog(main, buildingClassList, "", skin);
+
+        final TimeRowWindow timeRowWindow = new TimeRowWindow(main,screenStage, skin);
+
+        timeTableButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                GameInstance.Airport().setPauseSimulation(true);
+                timeRowWindow.setupScreen();
+                timeRowWindow.show(screenStage);
+            }
+        });
+
+
         BitmapFont boldFont = new BitmapFont(Gdx.files.internal("ArialBasic.fnt"), Gdx.files.internal("ArialBasic.png"), false);
 
         Label.LabelStyle boldStyle = new Label.LabelStyle(boldFont, Color.BLACK);
@@ -335,7 +358,7 @@ public class UiManager {
 
         table.add(removeSelectionButton).align(Align.left | Align.bottom);
         table.add();
-        table.add();
+        table.add(timeTableButton).align(Align.top | Align.right);
 
         table.row();
         table.add(buildRoadButton).align(Align.left | Align.bottom).padBottom(100f);
