@@ -17,8 +17,8 @@ import com.pukekogames.airportdesigner.UiManager;
 public class DrawVehicle {
 
     public static void draw(SpriteBatch batch, Vehicle vehicle) {
-        Texture texture = TextureLoader.Instance().getTexture(vehicle.getImageID());
-
+//        Texture texture = TextureLoader.Instance().getTexture(vehicle.getImageID());
+        Texture texture = vehicle.getTexture();
         if (texture != null) {
 
             float scale = 1f;
@@ -41,7 +41,7 @@ public class DrawVehicle {
     static void drawVehicleStatus(SpriteBatch batch, Vehicle vehicle) {
         ShapeRenderer renderer = DrawManager.getShapeRenderer();
         boolean selected = vehicle.isSelected();
-        if (vehicle instanceof Airplane){
+        if (vehicle instanceof Airplane) {
             Airplane airplane = (Airplane) vehicle;
             boolean holdPosition = airplane.isHoldPosition();
             AirplaneState state = airplane.getState();

@@ -1,5 +1,6 @@
 package com.pukekogames.airportdesigner.Objects.Vehicles;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.pukekogames.airportdesigner.GameInstance.GameInstance;
 import com.pukekogames.airportdesigner.Helper.*;
 import com.pukekogames.airportdesigner.Helper.GameLogic.GameplayWarning;
@@ -39,6 +40,7 @@ public abstract class Vehicle extends ClickableGameObject {
     Vector2D closestVehicleVector = null;
     Vehicle closestVehicle = null;
     int lastDistanceSet = 0;
+    Texture texture;
 
     ArrayList<GameplayWarning> warnings;
 
@@ -579,5 +581,13 @@ public abstract class Vehicle extends ClickableGameObject {
 
     public float getCollisionRadius() {
         return collisionRadius;
+    }
+
+    public Texture getTexture() {
+        return texture;
+    }
+
+    public void setTexture(Texture texture) {
+        this.texture = texture;
     }
 }

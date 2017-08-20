@@ -82,6 +82,11 @@ public class DepotListDialog extends Dialog {
         setPrice();
     }
 
+    public void setContent(ArrayList<String> content){
+        if (content != null) list.setItems(content.toArray());
+        setPrice();
+    }
+
     @Override
     public float getPrefWidth() {
         // force dialog width
@@ -96,6 +101,7 @@ public class DepotListDialog extends Dialog {
 
     private void setPrice() {
         String result = (String) list.getSelected();
+        if (result == null) return;
         long price = 0;
         switch (result) {
             case "BusDepot":

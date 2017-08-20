@@ -7,6 +7,8 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
+import com.pukekogames.airportdesigner.GameContent;
+import com.pukekogames.airportdesigner.GameInstance.GameInstance;
 import com.pukekogames.airportdesigner.Main;
 
 /**
@@ -23,6 +25,8 @@ public class TimeTableScreen implements Screen {
     public TimeTableScreen(Main main, Skin skin) {
         this.main = main;
         this.skin = skin;
+        GameInstance.Settings().gameType = 1;
+        GameContent.setNewGame();
     }
 
     @Override
@@ -30,6 +34,7 @@ public class TimeTableScreen implements Screen {
         stage = new Stage();
         Gdx.input.setInputProcessor(stage);
         inventoryActor = new TimeRowWindow(main,stage, skin);
+        inventoryActor.setupScreen();
         inventoryActor.show(stage);
 
 //        stage.addActor(inventoryActor);

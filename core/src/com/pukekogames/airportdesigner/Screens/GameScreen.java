@@ -16,6 +16,11 @@ import com.pukekogames.airportdesigner.GameInstance.GameInstance;
 import com.pukekogames.airportdesigner.Helper.CommonMethods;
 import com.pukekogames.airportdesigner.Helper.GameSave;
 import com.pukekogames.airportdesigner.Helper.GameStart;
+import com.pukekogames.airportdesigner.Objects.Airlines.Airline;
+import com.pukekogames.airportdesigner.Objects.Airlines.AirlineList;
+import com.pukekogames.airportdesigner.Objects.Vehicles.Airplane;
+import com.pukekogames.airportdesigner.Objects.Vehicles.VehicleData.AirplaneDataB747;
+import com.pukekogames.airportdesigner.Objects.Vehicles.VehicleData.AirplaneDataB777;
 
 import java.io.*;
 
@@ -33,6 +38,7 @@ public class GameScreen implements Screen {
 
     public float screenWidth, screenHeight;
 
+    private Airplane airplane;
     private Main main;
     private SpriteBatch spriteBatch;
     private OrthographicCamera camera;
@@ -61,6 +67,13 @@ public class GameScreen implements Screen {
         uiManager.setHandler(handler);
         screenPos = new Vector3();
         worldPos = new Vector3();
+
+        airplane = new Airplane(new AirplaneDataB777(), new Airline(1));
+
+        Texture texture = TextureLoader.Instance().getTexture(airplane.getImageID());
+        Texture t = AirlineList.setbaseColor(texture, airplane.getAirline());
+        airplane.setTexture(t);
+
 
         switch (gameStart) {
 
@@ -155,7 +168,7 @@ public class GameScreen implements Screen {
     @Override
     public void render(float delta) {
         handleInput();
-        handler.tick();
+//        handler.tick();
 
         camera.update();
 
@@ -178,7 +191,11 @@ public class GameScreen implements Screen {
 //        DrawManager.getShapeRenderer().end();
 
 
-        handler.draw(spriteBatch);
+//        handler.draw(spriteBatch);
+
+        spriteBatch.begin();
+        DrawManager.draw(spriteBatch, airplane);
+        spriteBatch.end();
 
 //        DrawManager.getShapeRenderer().begin(ShapeRenderer.ShapeType.Filled);
 //        for (int i = 0; i < GameInstance.Airport().getRoadIntersectionCount(); i++) {

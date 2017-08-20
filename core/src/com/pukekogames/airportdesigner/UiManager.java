@@ -60,6 +60,10 @@ public class UiManager {
     private Label gameSpeedLabel;
     private Label timeLabel;
 
+    private SaveDialog saveDialog;
+    private RoadListDialog roadListDialog;
+    private DepotListDialog depotListDialog;
+    private AirplaneInfoDialog airplaneInfoDialog;
 
     private Stage gameStage;
 
@@ -86,7 +90,6 @@ public class UiManager {
 
     public void setup() {
         skin = new Skin(Gdx.files.internal("ui\\uiskin.json"));
-
         final float buttonWidth = GameInstance.Settings().ButtonWidth * Gdx.graphics.getPpcX() / 25;
         final float buttonHeight = GameInstance.Settings().ButtonHeight * Gdx.graphics.getPpcY() / 25;
         int circleButtonDiameter = (int) (GameInstance.Settings().circleButtonWidth * Gdx.graphics.getPpcX() / 100f);
@@ -103,6 +106,7 @@ public class UiManager {
         screenStage = new Stage(new StretchViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
 
         gameStage = new Stage(new ScreenViewport());
+        setupScreens();
         table = new Table();
         table.setFillParent(true);
 //        table.align(Align.center | Align.top);
@@ -143,7 +147,6 @@ public class UiManager {
         optionButton.setHeight(circleButtonDiameter);
         optionButton.setWidth(circleButtonDiameter);
 
-        final SaveDialog saveDialog = new SaveDialog(main, screenStage, "", skin);
 
         optionButton.addListener(new ClickListener() {
             @Override
@@ -184,14 +187,6 @@ public class UiManager {
         changeModeButton.setHeight(circleButtonDiameter);
         changeModeButton.setWidth(circleButtonDiameter);
 
-        ArrayList<String> classNamesList = new ArrayList<>();
-
-        classNamesList.add("Taxiway");
-        classNamesList.add("Runway");
-        classNamesList.add("Street");
-        classNamesList.add("ParkGate");
-
-        final RoadListDialog roadListDialog = new RoadListDialog(main, classNamesList, "", skin);
 
         changeModeButton.addListener(new ClickListener() {
             @Override
@@ -209,28 +204,26 @@ public class UiManager {
         buildBuildingButton.setHeight(circleButtonDiameter);
         buildBuildingButton.setWidth(circleButtonDiameter);
 
-        ArrayList<String> buildingClassList = new ArrayList<>();
-
-        buildingClassList.add("CrewBusDepot");
-        buildingClassList.add("BusDepot");
-        buildingClassList.add("BaggageDepot");
-        buildingClassList.add("TankDepot");
-        buildingClassList.add("CateringDepot");
-
-        if (GameInstance.Settings().level >= 3) {
-            buildingClassList.add("Terminal");
-        }
-        if (GameInstance.Settings().level > 4 && GameInstance.Airport().getTower() == null) {
-            buildingClassList.add("Tower");
-        }
-
-        final DepotListDialog depotListDialog = new DepotListDialog(main, buildingClassList, "", skin);
-
         buildBuildingButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
 
+                ArrayList<String> buildingClassList = new ArrayList<>();
 
+                buildingClassList.add("CrewBusDepot");
+                buildingClassList.add("BusDepot");
+                buildingClassList.add("BaggageDepot");
+                buildingClassList.add("TankDepot");
+                buildingClassList.add("CateringDepot");
+
+                if (GameInstance.Settings().level >= 3) {
+                    buildingClassList.add("Terminal");
+                }
+                if (GameInstance.Settings().level > 4 && GameInstance.Airport().getTower() == null) {
+                    buildingClassList.add("Tower");
+                }
+
+                depotListDialog.setContent(buildingClassList);
                 depotListDialog.show(screenStage);
 
                 switchBuild(3);
@@ -268,6 +261,7 @@ public class UiManager {
 
         setupBuildRoadButton();
 
+
         final ImageButton timeTableButton = getButton(TextureLoader.indexCircleButtonTakeOff);
 
         timeTableButton.setHeight(circleButtonDiameter);
@@ -275,14 +269,16 @@ public class UiManager {
 
 //        final DepotListDialog depotListDialog = new DepotListDialog(main, buildingClassList, "", skin);
 
-        final TimeRowWindow timeRowWindow = new TimeRowWindow(main,screenStage, skin);
+        final TimeRowWindow timeRowWindow = new TimeRowWindow(main, screenStage, skin);
 
         timeTableButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                GameInstance.Airport().setPauseSimulation(true);
-                timeRowWindow.setupScreen();
-                timeRowWindow.show(screenStage);
+                if (!GameInstance.Airport().isPauseSimulation()) {
+                    GameInstance.Airport().setPauseSimulation(true);
+                    timeRowWindow.setupScreen();
+                    timeRowWindow.show(screenStage);
+                }
             }
         });
 
@@ -389,6 +385,24 @@ public class UiManager {
 //        gameStage.addActor(button);
         screenStage.addActor(table);
         switchBuild(0);
+    }
+
+    private void setupScreens() {
+        saveDialog = new SaveDialog(main, screenStage, "", skin);
+
+
+        ArrayList<String> classNamesList = new ArrayList<>();
+
+        classNamesList.add("Taxiway");
+        classNamesList.add("Runway");
+        classNamesList.add("Street");
+        classNamesList.add("ParkGate");
+
+        roadListDialog = new RoadListDialog(main, classNamesList, "", skin);
+
+        depotListDialog = new DepotListDialog(main, null, "", skin);
+
+        airplaneInfoDialog = new AirplaneInfoDialog(main, "", skin);
     }
 
     private void setupBuildRoadButton() {
@@ -614,6 +628,7 @@ public class UiManager {
 
             removeCircleButtons();
             buttonCircle.setObject(plane);
+
             if (GameInstance.Settings().DebugMode) {
                 ImageButton deleteButton = getButton(TextureLoader.indexButtonDelete);
 
@@ -758,6 +773,21 @@ public class UiManager {
                 case Departure:
                     break;
             }
+
+            ImageButton infoButton = getButton(TextureLoader.indexCircleButtonInfo);
+            infoButton.setHeight(circleButtonDiameter);
+            infoButton.setWidth(circleButtonDiameter);
+            infoButton.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    GameInstance.Airport().setPauseSimulation(true);
+                    removeCircleButtons();
+                    airplaneInfoDialog.setContent(plane);
+                    airplaneInfoDialog.show(gameStage);
+                }
+            });
+            buttonCircle.addButton(infoButton);
+            gameStage.addActor(infoButton);
 
         }
 
@@ -928,7 +958,7 @@ public class UiManager {
     }
 
     public void resize(int width, int height) {
-        GameInstance.Settings().screenSize.set(width,height);
+        GameInstance.Settings().screenSize.set(width, height);
         screenStage.getViewport().update(width, height);
         gameStage.getViewport().update(width, height);
     }
@@ -946,7 +976,7 @@ public class UiManager {
         return gameStage;
     }
 
-    public GameScreen getGameScreen(){
+    public GameScreen getGameScreen() {
         return gameScreen;
     }
 }

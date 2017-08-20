@@ -1,10 +1,7 @@
 package com.pukekogames.airportdesigner;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -48,7 +45,8 @@ public class TextureLoader {
         textures[Images.indexAirplaneA320] = new Texture(Gdx.files.internal("airplane_a320.png"));
         textures[Images.indexAirplaneA320Czech] = new Texture(Gdx.files.internal("airplane_a320_czech.png"));
         textures[Images.indexAirplaneB737Alaska] = new Texture(Gdx.files.internal("airplane_b737_alaska.png"));
-        textures[Images.indexAirplane777] = new Texture(Gdx.files.internal("airplane_777.png"));
+        Texture b777 = new Texture(Gdx.files.internal("airplane_777.png"));
+        textures[Images.indexAirplane777] = changeColor(b777, new Color(1f, 0.61f, 0.61f, 1.0f), Color.BLACK);
         textures[Images.indexAirplane747] = new Texture(Gdx.files.internal("airplane_b747.png"));
         textures[Images.indexAirplane380] = new Texture(Gdx.files.internal("airplane_a380.png"));
 
@@ -60,7 +58,12 @@ public class TextureLoader {
 
         textures[Images.indexRunwayEnd] = new Texture(Gdx.files.internal("runway_end.jpg"));
         textures[Images.indexRunwayMiddle] = new Texture(Gdx.files.internal("runway_middle.jpg"));
-        textures[Images.indexTaxiway] = new Texture(Gdx.files.internal("taxiway.jpg"));
+
+        Color taxiColor = new Color();
+        Texture taxiway = new Texture(Gdx.files.internal("taxiway.jpg"));
+        Color.abgr8888ToColor(taxiColor, Color.argb8888(1.0f, 0.61f, 0.61f, 0.61f));
+        textures[Images.indexTaxiway] = changeColor(taxiway, new Color(0.61f, 0.61f, 0.61f, 1.0f), Color.BLACK);
+//        textures[Images.indexTaxiway] = new Texture(Gdx.files.internal("taxiway.jpg"));
         textures[Images.indexStreet] = new Texture(Gdx.files.internal("street.jpg"));
         textures[Images.indexParkGate] = new Texture(Gdx.files.internal("parkgate.jpg"));
 
@@ -126,5 +129,124 @@ public class TextureLoader {
 
         Texture tex = fbo.getColorBufferTexture();
         return tex;
+    }
+
+    public static Texture changeColor(Texture texture, Color baseColor, Color newColor) {
+        TextureData textureData = texture.getTextureData();
+        textureData.prepare();
+        Pixmap pixmap = textureData.consumePixmap();
+        for (int x = 0; x < pixmap.getWidth(); x++) {
+            for (int y = 0; y < pixmap.getHeight(); y++) {
+                Color color = new Color();
+                Color.rgba8888ToColor(color, pixmap.getPixel(x, y));
+                int c = pixmap.getPixel(x, y);
+                if (ColorEqual(baseColor, color, 0.1f)) {
+                    pixmap.setColor(newColor);
+                    pixmap.fillRectangle(x, y, 1, 1);
+                }
+//                int colorInt[] = getColorFromHex(color);
+            }
+        }
+        Texture tex = new Texture(pixmap);
+        return tex;
+
+    }
+
+    public static boolean ColorEqual(Color c1, Color c2, float epsilon){
+        if (c1 == null || c2 == null) return false;
+        if (Math.abs(c1.r - c2.r) > epsilon) return false;
+        if (Math.abs(c1.g - c2.g) > epsilon) return false;
+        if (Math.abs(c1.b - c2.b) > epsilon) return false;
+        return true;
+    }
+
+    //Original from java.awt.color, because android cant reference it
+    public static int[] HSBtoRGB(float hue, float saturation, float brightness) {
+        int r = 0, g = 0, b = 0;
+        if (saturation == 0) {
+            r = g = b = (int) (brightness * 255.0f + 0.5f);
+        } else {
+            float h = (hue - (float)Math.floor(hue)) * 6.0f;
+            float f = h - (float)java.lang.Math.floor(h);
+            float p = brightness * (1.0f - saturation);
+            float q = brightness * (1.0f - saturation * f);
+            float t = brightness * (1.0f - (saturation * (1.0f - f)));
+            switch ((int) h) {
+                case 0:
+                    r = (int) (brightness * 255.0f + 0.5f);
+                    g = (int) (t * 255.0f + 0.5f);
+                    b = (int) (p * 255.0f + 0.5f);
+                    break;
+                case 1:
+                    r = (int) (q * 255.0f + 0.5f);
+                    g = (int) (brightness * 255.0f + 0.5f);
+                    b = (int) (p * 255.0f + 0.5f);
+                    break;
+                case 2:
+                    r = (int) (p * 255.0f + 0.5f);
+                    g = (int) (brightness * 255.0f + 0.5f);
+                    b = (int) (t * 255.0f + 0.5f);
+                    break;
+                case 3:
+                    r = (int) (p * 255.0f + 0.5f);
+                    g = (int) (q * 255.0f + 0.5f);
+                    b = (int) (brightness * 255.0f + 0.5f);
+                    break;
+                case 4:
+                    r = (int) (t * 255.0f + 0.5f);
+                    g = (int) (p * 255.0f + 0.5f);
+                    b = (int) (brightness * 255.0f + 0.5f);
+                    break;
+                case 5:
+                    r = (int) (brightness * 255.0f + 0.5f);
+                    g = (int) (p * 255.0f + 0.5f);
+                    b = (int) (q * 255.0f + 0.5f);
+                    break;
+            }
+        }
+        int[] out = new int[3];
+        out[0] = r;
+        out[1] = g;
+        out[2] = b;
+        return out;
+//        return 0xff000000 | (r << 16) | (g << 8) | (b << 0);
+    }
+
+    //Original from java.awt.color, because android cant reference it
+    public static float[] RGBtoHSB(int r, int g, int b, float[] hsbvals) {
+        float hue, saturation, brightness;
+        if (hsbvals == null) {
+            hsbvals = new float[3];
+        }
+        int cmax = (r > g) ? r : g;
+        if (b > cmax) cmax = b;
+        int cmin = (r < g) ? r : g;
+        if (b < cmin) cmin = b;
+
+        brightness = ((float) cmax) / 255.0f;
+        if (cmax != 0)
+            saturation = ((float) (cmax - cmin)) / ((float) cmax);
+        else
+            saturation = 0;
+        if (saturation == 0)
+            hue = 0;
+        else {
+            float redc = ((float) (cmax - r)) / ((float) (cmax - cmin));
+            float greenc = ((float) (cmax - g)) / ((float) (cmax - cmin));
+            float bluec = ((float) (cmax - b)) / ((float) (cmax - cmin));
+            if (r == cmax)
+                hue = bluec - greenc;
+            else if (g == cmax)
+                hue = 2.0f + redc - bluec;
+            else
+                hue = 4.0f + greenc - redc;
+            hue = hue / 6.0f;
+            if (hue < 0)
+                hue = hue + 1.0f;
+        }
+        hsbvals[0] = hue;
+        hsbvals[1] = saturation;
+        hsbvals[2] = brightness;
+        return hsbvals;
     }
 }

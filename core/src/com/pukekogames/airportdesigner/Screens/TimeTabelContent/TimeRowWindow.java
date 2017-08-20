@@ -40,8 +40,10 @@ public class TimeRowWindow extends Dialog {
 
         Table scrollTable = new Table();
 
+
         scrollPane = new ScrollPane(scrollTable, skin);
         scrollPane.setFadeScrollBars(false);
+        scrollPane.setScrollBarPositions(false, true);
 
 
         getContentTable().add(scrollPane).fill().expand();
@@ -54,11 +56,11 @@ public class TimeRowWindow extends Dialog {
 
         setModal(true);
         setMovable(false);
-        setFillParent(true);
     }
 
     public void setupScreen() {
         Table scrollTable = new Table();
+        Table labelTable = new Table();
 
 //        GameInstance.Settings().gameType = 1;
 //        GameContent.setNewGame();
@@ -99,8 +101,8 @@ public class TimeRowWindow extends Dialog {
         for (int i = 0; i < timeRows.size(); i++) {
             TimeRow timeRow = timeRows.get(i);
             Label label = new Label("Gate " + (i + 1), skin);
+            labelTable.add(label).row();
             scrollTable.add(label).padRight(50);
-            Table rowTable = new Table();
 
 
             for (TimeSlot slot : timeRow.getTimeSlots()) {
@@ -119,8 +121,16 @@ public class TimeRowWindow extends Dialog {
             scrollTable.add().padBottom(100);
             scrollTable.row();
         }
+        Table contentTable = new Table();
+//        scrollTable.setFillParent(true);//
+        scrollTable.setWidth(Gdx.graphics.getWidth() + 0.5f);
+        ScrollPane timeScroll = new ScrollPane(scrollTable, skin);
+        contentTable.add(labelTable);
+        contentTable.add(timeScroll);
+
 
         scrollPane.setWidget(scrollTable);
+//        scrollPane.setScrollingDisabled(true, false);
 //        ScrollPane verticalScrollPane = new ScrollPane(scrollTable, skin);
 //        verticalScrollPane.setFadeScrollBars(false);
     }

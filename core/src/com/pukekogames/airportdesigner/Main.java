@@ -192,6 +192,7 @@ public class Main extends Game {
 
 		if (assets.update()){
             if (!screenSet) {
+
 //                setScreen(new TimeTableScreen(this, skin));
 				setScreen(new MainMenuScreen(this));
                 screenSet = true;
