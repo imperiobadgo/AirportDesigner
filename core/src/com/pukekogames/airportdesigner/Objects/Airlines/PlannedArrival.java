@@ -2,6 +2,7 @@ package com.pukekogames.airportdesigner.Objects.Airlines;
 
 import com.pukekogames.airportdesigner.Helper.TimeStamp;
 import com.pukekogames.airportdesigner.Objects.Vehicles.Airplane;
+import com.pukekogames.airportdesigner.Objects.Vehicles.AirplaneList;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -88,6 +89,7 @@ public class PlannedArrival implements Serializable {
     public Airplane generateNewAirplane() {
         Airline airline = airplane.getAirline();
         Airplane newAirplane = new Airplane(airplane.getPerformance(), airline);
+        newAirplane.setTexture(airplane.getTexture());
         newAirplane.setPlannedTime(new TimeStamp(time.getTime()));
         newAirplane.setCallSign(getCallSign());
         editable = false;

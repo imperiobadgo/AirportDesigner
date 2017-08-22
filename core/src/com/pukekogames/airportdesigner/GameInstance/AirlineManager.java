@@ -4,6 +4,7 @@ import com.pukekogames.airportdesigner.Objects.Airlines.Airline;
 import com.pukekogames.airportdesigner.Objects.Airlines.AirlineList;
 import com.pukekogames.airportdesigner.Objects.Airlines.PlannedArrival;
 import com.pukekogames.airportdesigner.Objects.Vehicles.Airplane;
+import com.pukekogames.airportdesigner.Objects.Vehicles.AirplaneList;
 import com.pukekogames.airportdesigner.Objects.Vehicles.VehicleData.AirplaneDataCessna;
 import com.pukekogames.airportdesigner.Objects.Vehicles.VehicleData.AirplaneDataSmall;
 import com.pukekogames.airportdesigner.Objects.Vehicles.VehicleData.AirplanePerformance;
@@ -50,6 +51,7 @@ public class AirlineManager implements Serializable {
             callSign += AirlineList.CHARS.charAt(random.nextInt(AirlineList.CHARS.length()));
         }
         airplane.setCallSign(callSign);
+        AirplaneList.getTexture(airplane);
         return airplane;
     }
 

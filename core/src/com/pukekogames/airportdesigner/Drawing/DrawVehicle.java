@@ -19,10 +19,23 @@ public class DrawVehicle {
     public static void draw(SpriteBatch batch, Vehicle vehicle) {
 //        Texture texture = TextureLoader.Instance().getTexture(vehicle.getImageID());
         Texture texture = vehicle.getTexture();
-        if (texture != null) {
-
+        if (texture == null) {
+            texture = TextureLoader.Instance().getTexture(vehicle.getImageID());
+        }
             float scale = 1f;
-            if (vehicle instanceof Airplane) scale = 2f;
+            if (vehicle instanceof Airplane)
+            {
+                Airplane airplane = (Airplane) vehicle;
+
+                if (airplane.getCategory() > 2){
+                    scale = 3f;
+                }else if (airplane.getCategory() > 3){
+                    scale = 4f;
+                }else {
+                    scale = 2f;
+                }
+            }
+
 
             UiManager.worldPos.set(vehicle.getAlign_X(), vehicle.getAlign_Y(), 0);
             UiManager.screenPos.set(UiManager.worldPos);
@@ -35,7 +48,7 @@ public class DrawVehicle {
             DrawManager.drawBatch(batch, texture, vehicle.getAlign_X(), vehicle.getAlign_Y(), vehicle.getHeading() - 90, scale);
 
 
-        }
+
     }
 
     static void drawVehicleStatus(SpriteBatch batch, Vehicle vehicle) {

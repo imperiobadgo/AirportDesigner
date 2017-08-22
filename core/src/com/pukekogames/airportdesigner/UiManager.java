@@ -506,7 +506,7 @@ public class UiManager {
         int hour = GameInstance.Instance().getHour();
         int minute = GameInstance.Instance().getMinute();
         timeLabel.setText(String.format("%02d", hour) + ":" + String.format("%02d", minute));
-        levelLabel.setText(String.format("Level %1$d", GameInstance.Settings().level));
+        levelLabel.setText(String.format("Level %1$d", GameInstance.Settings().level) + "   " + Gdx.graphics.getFramesPerSecond() + " fps");
         modeLabel.setText(String.format("Mode %1$d", GameInstance.Settings().buildMode));
         gameSpeedLabel.setText(String.format("GS %1$d", GameInstance.Settings().gameSpeed));
         gameSpeedButton.setText(String.format("GS %1$d", GameInstance.Settings().gameSpeed));

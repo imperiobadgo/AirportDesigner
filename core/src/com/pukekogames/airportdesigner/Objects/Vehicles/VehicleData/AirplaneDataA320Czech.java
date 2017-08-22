@@ -9,6 +9,7 @@ public class AirplaneDataA320Czech extends AirplanePerformance {
 
     public AirplaneDataA320Czech(){
         StandardAirplane();
+        airplaneID = 1;
         imageID = Images.indexAirplaneA320Czech;
         category = 3;
     }

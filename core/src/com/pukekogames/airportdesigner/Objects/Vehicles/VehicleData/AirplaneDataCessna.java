@@ -9,6 +9,7 @@ public class AirplaneDataCessna extends AirplanePerformance {
 
     public AirplaneDataCessna(){
         SmallAirplane();
+        airplaneID = 6;
         imageID = Images.indexAirplaneCessna;
         category = 2;
     }

@@ -2,6 +2,7 @@ package com.pukekogames.airportdesigner.Objects.Airlines;
 
 import com.pukekogames.airportdesigner.GameInstance.GameInstance;
 import com.pukekogames.airportdesigner.Objects.Vehicles.Airplane;
+import com.pukekogames.airportdesigner.Objects.Vehicles.AirplaneList;
 import com.pukekogames.airportdesigner.Objects.Vehicles.VehicleData.*;
 
 import java.io.Serializable;
@@ -69,6 +70,8 @@ public class Airline implements Serializable {
         }
 
         String callSign = AirlineList.getAirlineCode(id) + hourString + (random.nextInt(88) + 10);
+
+        AirplaneList.getTexture(newAirplane);
 
         PlannedArrival plannedArrival = new PlannedArrival(plannedHour, random.nextInt(2) + random.nextInt(2) + 1, newAirplane);
         plannedArrival.setCallSign(callSign);

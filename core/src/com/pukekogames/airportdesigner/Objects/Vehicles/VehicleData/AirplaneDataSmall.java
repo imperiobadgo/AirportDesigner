@@ -9,6 +9,7 @@ public class AirplaneDataSmall extends AirplanePerformance {
 
     public AirplaneDataSmall(){
         SmallAirplane();
+        airplaneID =7;
         imageID = Images.indexAirplaneSmall;
         category = 1;
     }

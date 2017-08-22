@@ -16,9 +16,12 @@ public abstract class AirplanePerformance extends VehiclePerformance {
     public float climbrate;
     public float collisionRadius;
 
+    protected int airplaneID;
     protected int imageID;
     protected int category;
     protected boolean needTerminal;
+
+    public int getAirplaneID(){return airplaneID;}
 
     public int getImageID(){
         return imageID;

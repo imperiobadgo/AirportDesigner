@@ -431,7 +431,7 @@ public class Airport implements Serializable {
         }
         ArrayList<Vehicle> removeVehicles = new ArrayList<>();
         for (Vehicle vehicle : vehicles) {
-            if (Math.abs(vehicle.getCenterPos().x) > 50000 || Math.abs(vehicle.getCenterPos().y) > 50000) {
+            if (Math.abs(vehicle.getX()) > 40000 || Math.abs(vehicle.getY()) > 40000) {
                 removeVehicles.add(vehicle);
                 continue;
             }

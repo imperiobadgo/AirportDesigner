@@ -9,6 +9,7 @@ public class AirplaneDataB737Alaska extends AirplanePerformance {
 
     public AirplaneDataB737Alaska(){
         StandardAirplane();
+        airplaneID = 3;
         imageID = Images.indexAirplaneB737Alaska;
         category = 3;
     }

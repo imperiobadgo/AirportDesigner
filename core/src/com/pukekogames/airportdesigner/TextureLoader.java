@@ -40,15 +40,14 @@ public class TextureLoader {
 
 
     public void loadTextures() {
-        textures[Images.indexAirplaneSmall] = new Texture(Gdx.files.internal("airplane_small.png"));
-        textures[Images.indexAirplaneCessna] = new Texture(Gdx.files.internal("airplane_cessna.png"));
-        textures[Images.indexAirplaneA320] = new Texture(Gdx.files.internal("airplane_a320.png"));
-        textures[Images.indexAirplaneA320Czech] = new Texture(Gdx.files.internal("airplane_a320_czech.png"));
-        textures[Images.indexAirplaneB737Alaska] = new Texture(Gdx.files.internal("airplane_b737_alaska.png"));
-        Texture b777 = new Texture(Gdx.files.internal("airplane_777.png"));
-        textures[Images.indexAirplane777] = changeColor(b777, new Color(1f, 0.61f, 0.61f, 1.0f), Color.BLACK);
-        textures[Images.indexAirplane747] = new Texture(Gdx.files.internal("airplane_b747.png"));
-        textures[Images.indexAirplane380] = new Texture(Gdx.files.internal("airplane_a380.png"));
+        textures[Images.indexAirplaneSmall] = new Texture(Gdx.files.internal("airplanes\\airplane_small.png"));
+        textures[Images.indexAirplaneCessna] = new Texture(Gdx.files.internal("airplanes\\airplane_cessna.png"));
+        textures[Images.indexAirplaneA320] = new Texture(Gdx.files.internal("airplanes\\airplane_a320.png"));
+        textures[Images.indexAirplaneA320Czech] = new Texture(Gdx.files.internal("airplanes\\airplane_a320_czech.png"));
+        textures[Images.indexAirplaneB737Alaska] = new Texture(Gdx.files.internal("airplanes\\airplane_b737_alaska.png"));
+        textures[Images.indexAirplane777] = new Texture(Gdx.files.internal("airplanes\\airplane_777.png"));
+        textures[Images.indexAirplane747] = new Texture(Gdx.files.internal("airplanes\\airplane_b747.png"));
+        textures[Images.indexAirplane380] = new Texture(Gdx.files.internal("airplanes\\airplane_a380.png"));
 
         textures[Images.indexBus] = new Texture(Gdx.files.internal("bus.png"));
         textures[Images.indexCateringTruck] = new Texture(Gdx.files.internal("cateringtruck.png"));
@@ -59,10 +58,7 @@ public class TextureLoader {
         textures[Images.indexRunwayEnd] = new Texture(Gdx.files.internal("runway_end.jpg"));
         textures[Images.indexRunwayMiddle] = new Texture(Gdx.files.internal("runway_middle.jpg"));
 
-        Color taxiColor = new Color();
-        Texture taxiway = new Texture(Gdx.files.internal("taxiway.jpg"));
-        Color.abgr8888ToColor(taxiColor, Color.argb8888(1.0f, 0.61f, 0.61f, 0.61f));
-        textures[Images.indexTaxiway] = changeColor(taxiway, new Color(0.61f, 0.61f, 0.61f, 1.0f), Color.BLACK);
+        textures[Images.indexTaxiway] = new Texture(Gdx.files.internal("taxiway.jpg"));
 //        textures[Images.indexTaxiway] = new Texture(Gdx.files.internal("taxiway.jpg"));
         textures[Images.indexStreet] = new Texture(Gdx.files.internal("street.jpg"));
         textures[Images.indexParkGate] = new Texture(Gdx.files.internal("parkgate.jpg"));
@@ -129,35 +125,6 @@ public class TextureLoader {
 
         Texture tex = fbo.getColorBufferTexture();
         return tex;
-    }
-
-    public static Texture changeColor(Texture texture, Color baseColor, Color newColor) {
-        TextureData textureData = texture.getTextureData();
-        textureData.prepare();
-        Pixmap pixmap = textureData.consumePixmap();
-        for (int x = 0; x < pixmap.getWidth(); x++) {
-            for (int y = 0; y < pixmap.getHeight(); y++) {
-                Color color = new Color();
-                Color.rgba8888ToColor(color, pixmap.getPixel(x, y));
-                int c = pixmap.getPixel(x, y);
-                if (ColorEqual(baseColor, color, 0.1f)) {
-                    pixmap.setColor(newColor);
-                    pixmap.fillRectangle(x, y, 1, 1);
-                }
-//                int colorInt[] = getColorFromHex(color);
-            }
-        }
-        Texture tex = new Texture(pixmap);
-        return tex;
-
-    }
-
-    public static boolean ColorEqual(Color c1, Color c2, float epsilon){
-        if (c1 == null || c2 == null) return false;
-        if (Math.abs(c1.r - c2.r) > epsilon) return false;
-        if (Math.abs(c1.g - c2.g) > epsilon) return false;
-        if (Math.abs(c1.b - c2.b) > epsilon) return false;
-        return true;
     }
 
     //Original from java.awt.color, because android cant reference it

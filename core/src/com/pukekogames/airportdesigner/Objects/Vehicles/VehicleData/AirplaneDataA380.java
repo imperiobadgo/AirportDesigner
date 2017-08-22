@@ -9,6 +9,7 @@ public class AirplaneDataA380 extends AirplanePerformance {
 
     public AirplaneDataA380(){
         StandardAirplane();
+        airplaneID = 2;
         imageID = Images.indexAirplane380;
         category = 5;
     }
