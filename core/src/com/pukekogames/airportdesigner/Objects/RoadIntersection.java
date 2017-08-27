@@ -14,6 +14,7 @@ public class RoadIntersection extends ClickableGameObject {
     private PointFloat position;
     transient ArrayList<Road> roads;//indeces of the roads in airport list
     int nextListIndex = 0;
+    private int indexInList = 0;
 
     public RoadIntersection(PointFloat position) {
         super(Alignment.Table, position.x, position.y, 10, 10);
@@ -82,6 +83,14 @@ public class RoadIntersection extends ClickableGameObject {
     @Override
     public void tick() {
 
+    }
+
+    public int getIndexInList() {
+        return indexInList;
+    }
+
+    public void setIndexInList(int indexInList) {
+        this.indexInList = indexInList;
     }
 
     public void customWriteObject(){

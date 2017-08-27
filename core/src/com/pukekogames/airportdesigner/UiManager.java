@@ -298,10 +298,15 @@ public class UiManager {
 
         Drawable drawable = skin.getDrawable("default-rect-pad");
 
+        TextButton.TextButtonStyle textButtonStyle;
 
-        TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle(drawable, drawable, drawable, main.font);
+        if (Main.IS_STARTED_ON_MOBILE) {
+            textButtonStyle = new TextButton.TextButtonStyle(drawable, drawable, drawable, boldFont);
+        }else{
+            textButtonStyle = new TextButton.TextButtonStyle(drawable, drawable, drawable, main.font);
+        }
+
         gameSpeedButton = new TextButton("test", textButtonStyle);
-        gameSpeedButton.setHeight(30f);
         gameSpeedButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -318,7 +323,6 @@ public class UiManager {
         });
 
         TextButton debugButton = new TextButton("Debug", textButtonStyle);
-        debugButton.setHeight(30f);
         debugButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -337,8 +341,8 @@ public class UiManager {
         infoTable.add(moneyLabel).left().padRight(30f);
         infoTable.add(timeLabel).row();
         infoTable.add(levelLabel).left().row();
-        infoTable.add(modeLabel).left().row();
-        infoTable.add(gameSpeedButton).left().row();
+        infoTable.add(modeLabel).left().padBottom(30f).row();
+        infoTable.add(gameSpeedButton).left().padBottom(30f).row();
         infoTable.add(debugButton).left().row();
 
         constructionTable.add(changeModeButton).padRight(padding);

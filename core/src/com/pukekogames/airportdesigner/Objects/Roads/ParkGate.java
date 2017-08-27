@@ -90,7 +90,7 @@ public class ParkGate extends Road {
             case 5:
                 return new PointFloat(centerPos.x - perp.getX(), centerPos.y - perp.getY());
             case 6:
-                return new PointFloat(startPos.x + dirX * length * 0.9f - perp.getX() * 0.4f, startPos.y + dirY * length * 0.9f - perp.getY()* 0.4f);
+                return new PointFloat(startPos.x + dirX * length * 0.8f - perp.getX() * 0.4f, startPos.y + dirY * length * 0.8f - perp.getY()* 0.4f);
             default:
                 return endPos;
         }

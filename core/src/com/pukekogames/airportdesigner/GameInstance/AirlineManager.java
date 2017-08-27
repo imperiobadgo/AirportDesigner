@@ -37,7 +37,7 @@ public class AirlineManager implements Serializable {
 
     public void AddNewAirline(){
         if (freeIndeces.size() == 0) return;
-        int r = random.nextInt(freeIndeces.size() - 1);
+        int r = random.nextInt(freeIndeces.size());
         int index = freeIndeces.get(r);
         freeIndeces.remove(r);
         Airline airline = new Airline(index);

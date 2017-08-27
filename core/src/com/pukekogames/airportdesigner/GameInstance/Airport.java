@@ -381,6 +381,13 @@ public class Airport implements Serializable {
     }
 
     public void tick() {
+        if (GameInstance.Settings().shouldUpdateRoadMap){
+            for (int i = 0; i < roadIntersections.size(); i++) {
+                RoadIntersection intersection = roadIntersections.get(i);
+                intersection.setIndexInList(i);
+            }
+            GameInstance.Settings().shouldUpdateRoadMap = false;
+        }
         if (pauseSimulation) return;
 
         if (connectionChecks != null && connectionsMissing != null) {

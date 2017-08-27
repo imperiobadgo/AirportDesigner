@@ -1,6 +1,10 @@
 package com.pukekogames.airportdesigner.Drawing;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g3d.Shader;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.pukekogames.airportdesigner.GameInstance.Airport;
 import com.pukekogames.airportdesigner.GameInstance.GameInstance;
@@ -24,6 +28,7 @@ public class DrawAirport {
 
     private static DrawAirport ourInstance = new DrawAirport();
 
+
     public static DrawAirport Instance() {
         return ourInstance;
     }
@@ -32,17 +37,36 @@ public class DrawAirport {
     private LinkedList<GameObject> renderObjects;
     private LinkedList<RoadIntersection> selectedRoadIntersections;
     private ArrayList<Airplane> planeInstruction;
+    private PointInt windDirectionCenter;
+    private PointInt windDirectionTarget;
+    private ShaderProgram passThroughShader;
+    private ShaderProgram airplaneShader;
+    private ShaderProgram vehicleShader;
 
     private DrawAirport() {
         renderObjects = new LinkedList<GameObject>();
         selectedRoadIntersections = new LinkedList<RoadIntersection>();
         planeInstruction = new ArrayList<Airplane>();
+        windDirectionCenter = new PointInt(200, 200);
+        windDirectionTarget = new PointInt();
+        passThroughShader = new ShaderProgram(Gdx.files.internal("shaders/passthrough.vsh"), Gdx.files.internal("shaders/passthrough.fsh"));
+        passThroughShader.pedantic = false;
+
+        airplaneShader = new ShaderProgram(Gdx.files.internal("shaders/airplaneShader.vsh"), Gdx.files.internal("shaders/airplaneShader.fsh"));
+        airplaneShader.pedantic = false;
+
+        vehicleShader = new ShaderProgram(Gdx.files.internal("shaders/vehicleShader.vsh"), Gdx.files.internal("shaders/vehicleShader.fsh"));
+        vehicleShader.pedantic = false;
+        System.out.println("passthroughShader:" + (passThroughShader.isCompiled() ? " compiled" : passThroughShader.getLog()));
+        System.out.println("airplaneShader:" + (airplaneShader.isCompiled() ? " compiled" : airplaneShader.getLog()));
+        System.out.println("vehicleShader:" + (vehicleShader.isCompiled() ? " compiled" : vehicleShader.getLog()));
+
     }
 
     public void draw(SpriteBatch batch, Airport airport) {
-
+        ShaderProgram lastShader = batch.getShader();
         selectedRoadIntersections.clear();
-
+        batch.setShader(passThroughShader);
         DrawManager.getShapeRenderer().begin(ShapeRenderer.ShapeType.Filled);
         for (int i = 0; i < airport.getRoadIntersectionCount(); i++) {
             RoadIntersection roadIntersection = GameInstance.Airport().getRoadIntersection(i);
@@ -50,6 +74,7 @@ public class DrawAirport {
             DrawManager.draw(batch, roadIntersection);
         }
         DrawManager.getShapeRenderer().end();
+
 
         batch.begin();
         batch.disableBlending();
@@ -78,16 +103,27 @@ public class DrawAirport {
         DrawManager.getShapeRenderer().end();
 
         batch.begin();
+
+        if (GameInstance.Settings().DebugMode) {
+            batch.setShader(vehicleShader);
+        }
         for (int i = 0; i < airport.getVehicleCount(); i++) {
             Vehicle vehicle = airport.getVehicle(i);
             DrawManager.draw(batch, vehicle);
         }
 
+        if (GameInstance.Settings().DebugMode) {
+            batch.setShader(passThroughShader);
+        }
         for (int i = 0; i < airport.getBuildingCount(); i++) {
             Building building = airport.getBuilding(i);
             DrawManager.draw(batch, building);
         }
         planeInstruction.clear();
+
+        if (GameInstance.Settings().DebugMode) {
+            batch.setShader(airplaneShader);
+        }
 
         for (int i = 0; i < airport.getAirplaneCount(); i++) {
             Airplane airplane = airport.getAirplane(i);
@@ -97,6 +133,10 @@ public class DrawAirport {
             DrawManager.draw(batch, airplane);
         }
         batch.end();
+
+        if (GameInstance.Settings().DebugMode) {
+            batch.setShader(passThroughShader);
+        }
 
         DrawManager.getShapeRenderer().begin(ShapeRenderer.ShapeType.Line);
         for (RoadIntersection selectedIntersection : selectedRoadIntersections) {
@@ -118,9 +158,16 @@ public class DrawAirport {
             DrawManager.drawAttention(plane.getCenterPos(), batch, Settings.Instance().attentionColor, null);
 
         }
+        float windDirection = (GameInstance.Airport().getWindDirection()) % 360;
+        float radius = 100;
+        double dirX = (float) Math.cos(Math.toRadians(windDirection)) * radius;
+        double dirY = (float) Math.sin(Math.toRadians(windDirection)) * -radius;
+        windDirectionTarget.set(windDirectionCenter.x + Math.round(dirX), windDirectionCenter.y + Math.round(dirY));
+        DrawManager.drawArrow(windDirectionCenter, batch, Color.BLUE, windDirectionTarget);
         DrawManager.getShapeRenderer().setProjectionMatrix(Settings.Instance().uiManager.getGameScreen().getCamera().combined);
         DrawManager.getShapeRenderer().end();
 
+        batch.setShader(lastShader);
     }
 
 }

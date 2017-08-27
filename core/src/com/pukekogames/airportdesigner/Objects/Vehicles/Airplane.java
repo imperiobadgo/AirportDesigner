@@ -29,8 +29,8 @@ public class Airplane extends Vehicle {
     private float altitude = 0f;
 //    private AirplanePerformance performance;
 
-    private ArrayList<AirplaneServices> neededServices;
-    private ArrayList<AirplaneServices> bordingServices;
+    private ArrayList<AirplaneServices> neededServices;// first service
+    private ArrayList<AirplaneServices> bordingServices;//second service
     private Airline airline;
     private String callSign;
     private TimeStamp plannedTime;

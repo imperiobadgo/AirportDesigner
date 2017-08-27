@@ -398,6 +398,7 @@ public class GameScreen implements Screen {
                 System.out.println("error: " + e.getMessage());
             }
         }
+        GameInstance.Settings().shouldUpdateRoadMap = true;
     }
 
     private void loadWithExtension(String extension) throws IOException, ClassNotFoundException {

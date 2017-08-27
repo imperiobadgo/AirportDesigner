@@ -89,7 +89,7 @@ public class DrawManager {
         }
     }
 
-    private static void drawArrow(PointInt centerPos, SpriteBatch batch, Color attentionColor, PointInt sourcePoint) {
+    public static void drawArrow(PointInt centerPos, SpriteBatch batch, Color attentionColor, PointInt sourcePoint) {
         PointInt middlePos;
 
         if (sourcePoint == null){
