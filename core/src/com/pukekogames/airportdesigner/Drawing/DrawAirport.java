@@ -2,14 +2,18 @@ package com.pukekogames.airportdesigner.Drawing;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.Shader;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.pukekogames.airportdesigner.GameInstance.Airport;
 import com.pukekogames.airportdesigner.GameInstance.GameInstance;
 import com.pukekogames.airportdesigner.Helper.Geometry.PointInt;
+import com.pukekogames.airportdesigner.Objects.Airlines.AirlineList;
 import com.pukekogames.airportdesigner.Objects.Buildings.Building;
+import com.pukekogames.airportdesigner.Objects.ClickableGameObject;
 import com.pukekogames.airportdesigner.Objects.GameObject;
 import com.pukekogames.airportdesigner.Objects.RoadIntersection;
 import com.pukekogames.airportdesigner.Objects.Roads.Road;
@@ -60,47 +64,50 @@ public class DrawAirport {
         System.out.println("passthroughShader:" + (passThroughShader.isCompiled() ? " compiled" : passThroughShader.getLog()));
         System.out.println("airplaneShader:" + (airplaneShader.isCompiled() ? " compiled" : airplaneShader.getLog()));
         System.out.println("vehicleShader:" + (vehicleShader.isCompiled() ? " compiled" : vehicleShader.getLog()));
-
     }
 
-    public void draw(SpriteBatch batch, Airport airport) {
+    public void draw(SpriteBatch batch, Airport airport, ClickableGameObject selected) {
         ShaderProgram lastShader = batch.getShader();
         selectedRoadIntersections.clear();
         batch.setShader(passThroughShader);
-        DrawManager.getShapeRenderer().begin(ShapeRenderer.ShapeType.Filled);
-        for (int i = 0; i < airport.getRoadIntersectionCount(); i++) {
-            RoadIntersection roadIntersection = GameInstance.Airport().getRoadIntersection(i);
-            if (roadIntersection.isSelected()) selectedRoadIntersections.add(roadIntersection);
-            DrawManager.draw(batch, roadIntersection);
-        }
-        DrawManager.getShapeRenderer().end();
-
-
-        batch.begin();
-        batch.disableBlending();
-        for (int i = 0; i < airport.getRoadCount(); i++) {
-            Road road = airport.getRoad(i);
-            if (road instanceof Runway) continue;
-            DrawManager.draw(batch, road);
-
-        }
-        for (int i = 0; i < airport.getRunwayCount(); i++) {
-            Runway runway = airport.getRunway(i);
-            DrawManager.draw(batch, runway);
+        if (GameInstance.Settings().DebugShowRoad) {
+            DrawManager.getShapeRenderer().begin(ShapeRenderer.ShapeType.Filled);
+            for (int i = 0; i < airport.getRoadIntersectionCount(); i++) {
+                RoadIntersection roadIntersection = GameInstance.Airport().getRoadIntersection(i);
+                if (roadIntersection.isSelected()) selectedRoadIntersections.add(roadIntersection);
+                DrawManager.draw(batch, roadIntersection);
+            }
+            DrawManager.getShapeRenderer().end();
         }
 
-        batch.enableBlending();
-        batch.end();
+        if (GameInstance.Settings().DebugShowRoad) {
+            batch.begin();
+            batch.disableBlending();
+            for (int i = 0; i < airport.getRoadCount(); i++) {
+                Road road = airport.getRoad(i);
+                if (road instanceof Runway) continue;
+                DrawManager.draw(batch, road);
+
+            }
+            for (int i = 0; i < airport.getRunwayCount(); i++) {
+                Runway runway = airport.getRunway(i);
+                DrawManager.draw(batch, runway);
+            }
+
+            batch.enableBlending();
+            batch.end();
 
 
-        DrawManager.getShapeRenderer().begin(ShapeRenderer.ShapeType.Filled);
-        for (int i = 0; i < airport.getRoadCount(); i++) {
-            Road road = airport.getRoad(i);
-            DrawRoads.drawLines(batch, road);
+            DrawManager.getShapeRenderer().begin(ShapeRenderer.ShapeType.Filled);
+            for (int i = 0; i < airport.getRoadCount(); i++) {
+                Road road = airport.getRoad(i);
+                DrawRoads.drawLines(batch, road);
 
-        }
+            }
 //        DrawRoads.drawLines(spriteBatch, GameInstance.Airport().getRoad(0));
-        DrawManager.getShapeRenderer().end();
+            DrawManager.getShapeRenderer().end();
+        }
+
 
         batch.begin();
 
@@ -119,6 +126,8 @@ public class DrawAirport {
             Building building = airport.getBuilding(i);
             DrawManager.draw(batch, building);
         }
+
+
         planeInstruction.clear();
 
         if (GameInstance.Settings().DebugMode) {
@@ -130,8 +139,20 @@ public class DrawAirport {
             if (airplane.isWaitingForInstructions()) {
                 planeInstruction.add(airplane);
             }
+            if (GameInstance.Settings().DebugMode) {
+                Color baseColor;
+                if (airplane.getAirline() != null) {
+                    baseColor = AirlineList.getAirlineBaseColor(airplane.getAirline().getId());
+                } else {
+                    baseColor = Color.RED;
+                }
+                airplaneShader.setUniformf("u_Color", baseColor.r, baseColor.g, baseColor.b, 1);
+            }
+
             DrawManager.draw(batch, airplane);
         }
+
+
         batch.end();
 
         if (GameInstance.Settings().DebugMode) {
@@ -145,6 +166,12 @@ public class DrawAirport {
         for (int i = 0; i < airport.getVehicleCount(); i++) {
             Vehicle vehicle = airport.getVehicle(i);
             DrawVehicle.drawVehicleStatus(batch, vehicle);
+            if (GameInstance.Settings().DebugShowVehiclePath) {
+                DrawVehicle.drawPath(vehicle, selected, vehicle.getNextRoads());
+            }
+            if (GameInstance.Settings().DebugShowVehicleHeading){
+                DrawVehicle.drawHeading(vehicle);
+            }
         }
         DrawManager.getShapeRenderer().end();
 

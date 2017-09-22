@@ -12,6 +12,7 @@ public class AndroidLauncher extends AndroidApplication {
 		super.onCreate(savedInstanceState);
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
 		config.hideStatusBar = true;
+		config.numSamples = 2;
 		Main main = new Main();
 		Main.IS_STARTED_ON_MOBILE = true;
 		initialize(main, config);

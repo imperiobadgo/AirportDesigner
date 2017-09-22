@@ -60,6 +60,12 @@ public class CommonSettings implements Serializable {
 
     public int maxTime = 6000;
 
+    //Debug
+    public boolean DebugShowRoad = true;
+    public boolean DebugShowAirplanes = false;
+    public boolean DebugShowVehiclePath = false;
+    public boolean DebugShowVehicleHeading = false;
+
     //building
     transient public boolean buildRoadSelected = false;
     transient public int buildMode = 0; //0 no building, 1 building roads with needed intersections, 2 deleting, 3 build Building
@@ -69,5 +75,5 @@ public class CommonSettings implements Serializable {
     public int buildOffset = -100;
     transient public long buildPrice = 0;
     public int snapToLineDistance = 300;
-    public int buildMinRadius = 2000;
+    public int buildMinRadius = 3000;
 }

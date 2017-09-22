@@ -412,7 +412,7 @@ public class Handler {
 
     public void draw(SpriteBatch batch) {
 
-        DrawAirport.Instance().draw(batch, GameInstance.Airport());
+        DrawAirport.Instance().draw(batch, GameInstance.Airport(), selected);
 
         if (GameInstance.Settings().buildMode == 1) {
 

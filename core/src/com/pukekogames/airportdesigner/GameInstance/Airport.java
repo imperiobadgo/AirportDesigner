@@ -658,8 +658,9 @@ public class Airport implements Serializable {
         AirplanePerformance performance = plane.getPerformance();
         float speed = performance.maxSpeed; //(performance.maxSpeed + performance.landingSpeed) / 2;
         float timeForBreaking = speed * performance.deceleration;
-        float breakDistance = 0.5f * performance.deceleration * timeForBreaking * timeForBreaking + speed;
-        breakDistance = breakDistance * speed + 1500;
+//        float breakDistance = 0.5f * performance.deceleration * timeForBreaking * timeForBreaking + speed * timeForBreaking;
+//        breakDistance = breakDistance * speed + 1500;
+        float breakDistance = (speed * speed) / ( 2 * performance.deceleration) + 500;
         endDistance = (startAltitude / performance.sinkrate) * speed + breakDistance;
         PointInt spawnpoint = new PointInt((int) (otherIntersection.getPosition().x + dirX * endDistance), (int) (otherIntersection.getPosition().y + dirY * endDistance));
 

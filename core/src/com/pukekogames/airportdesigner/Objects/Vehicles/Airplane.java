@@ -130,13 +130,13 @@ public class Airplane extends Vehicle {
             calcSpeed = 9;
         }
 
-        float distanceToCorner = calcSpeed * 55 + (Math.abs(headingDifferenceToNextRoad) / 180) * 200;
+        float distanceToCorner = calcSpeed * 80 + (Math.abs(headingDifferenceToNextRoad) / 180) * 200;
 
-        if (state == AirplaneState.Landing) distanceToCorner = calcSpeed * 60;
+        if (state == AirplaneState.Landing) distanceToCorner = 2000;
 //        if (state == AirplaneState.TaxiToRunway && nextRoads.size() == 0) distanceToCorner = speed * 20;
-        if (state == AirplaneState.ArrivedAtGate) distanceToCorner = calcSpeed * 10;
+        if (state == AirplaneState.ArrivedAtGate) distanceToCorner = calcSpeed * 150;
 //        if (state == AirplaneState.ClearedForDeparture) distanceToCorner = calcSpeed * 2;
-        if (state == AirplaneState.ClearedForDeparture) distanceToCorner = calcSpeed * 40;
+        if (state == AirplaneState.ClearedForDeparture) distanceToCorner = calcSpeed * 50;
 
         if (pathfinding != null && toTarget.Length() < (Math.abs(distanceToCorner) * 1.1)) {
             //wait for pathfinding
@@ -333,7 +333,7 @@ public class Airplane extends Vehicle {
     }
 
     private boolean continueHeading() {
-        if (state == AirplaneState.Departure) return true;
+        if (state == AirplaneState.Departure || (state == AirplaneState.Takeoff  && speed > getPerformance().takeOffSpeed)) return true;
         float dotProduct = Vector2D.DotProduct(toTarget, headingDirection);
         return state == AirplaneState.Takeoff && dotProduct > 0;
     }

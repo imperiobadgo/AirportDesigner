@@ -53,15 +53,15 @@ public class ParkGate extends Road {
         return connectedRoadHasTerminal;
     }
 
-    public void checkForTerminal(){
+    public void checkForTerminal() {
         connectedRoadHasTerminal = false;
-        for (Road road: next.getRoadArray()){
-            if (road == this){
+        for (Road road : next.getRoadArray()) {
+            if (road == this) {
                 continue;
             }
-            if (road.getBuilding() != null){
+            if (road.getBuilding() != null) {
                 Building building = road.getBuilding();
-                if (building instanceof Terminal){
+                if (building instanceof Terminal) {
                     connectedRoadHasTerminal = true;
                     break;
                 }
@@ -71,65 +71,69 @@ public class ParkGate extends Road {
 
     }
 
-    public PointFloat getCornerPosition(int number){
+    public PointFloat getCornerPosition(int number) {
 
         float factor = 2.5f;
-        Vector2D perp = new Vector2D(dirY * length / factor, - dirX * length / factor);
+        Vector2D perp = new Vector2D(dirY * length / factor, -dirX * length / factor);
 //        System.out.println("perp: " + perp.getX() + " " + perp.getY() + " length: " + perp.Length() + " center: " + centerPos.x + " " + centerPos.y);
         //perp.Normalize();
 
-        switch(number){
+        switch (number) {
             case 1:
                 return new PointFloat(startPos.x + dirX * length * 0.9f + perp.getX() * 0.6f, startPos.y + dirY * length * 0.9f + perp.getY() * 0.6f);
             case 2:
-                return new PointFloat(centerPos.x + perp.getX() * 0.9f, centerPos.y + perp.getY() * 0.9f);
+                //service Position
+                return new PointFloat(startPos.x + dirX * length * 0.7f + perp.getX(), startPos.y + dirY * length * 0.6f + perp.getY());
             case 3:
-                return new PointFloat(startPos.x + dirX * length * 0.15f + perp.getX() * 0.4f, startPos.y + dirY * length * 0.15f + perp.getY() * 0.4f);
+                return new PointFloat(startPos.x + dirX * length * 0.35f + perp.getX() * 0.7f, startPos.y + dirY * length * 0.35f + perp.getY() * 0.7f);
             case 4:
-                return new PointFloat(startPos.x + dirX * length * 0.2f - perp.getX() * 0.5f, startPos.y + dirY * length * 0.2f - perp.getY() * 0.5f);
+                return new PointFloat(startPos.x + dirX * length * 0.35f - perp.getX() * 0.7f, startPos.y + dirY * length * 0.35f - perp.getY() * 0.7f);
             case 5:
-                return new PointFloat(centerPos.x - perp.getX(), centerPos.y - perp.getY());
+                //service Position
+                return new PointFloat(startPos.x + dirX * length * 0.7f - perp.getX(), startPos.y + dirY * length * 0.7f - perp.getY());
             case 6:
-                return new PointFloat(startPos.x + dirX * length * 0.8f - perp.getX() * 0.4f, startPos.y + dirY * length * 0.8f - perp.getY()* 0.4f);
+                return new PointFloat(startPos.x + dirX * length * 0.8f - perp.getX() * 0.8f, startPos.y + dirY * length * 0.8f - perp.getY() * 0.8f);
+            case 7:
+                return new PointFloat(startPos.x + dirX * length * 0.9f - perp.getX() * 0.1f, startPos.y + dirY * length * 0.9f - perp.getY() * 0.1f);
             default:
                 return endPos;
         }
 
     }
 
-    public void addVehicle(StreetVehicle vehicle){
+    public void addVehicle(StreetVehicle vehicle) {
         vehiclesServicing.add(vehicle);
     }
 
-    public void removeVehicle(StreetVehicle vehicle){
+    public void removeVehicle(StreetVehicle vehicle) {
         vehiclesServicing.remove(vehicle);
     }
 
-    public void resetVehiclesServicing(){
+    public void resetVehiclesServicing() {
         vehiclesServicing.clear();
     }
 
-    public int getEntryNumber(){
+    public int getEntryNumber() {
         return 1;
     }
 
-    public int getLeavePosition(){
-        return 6;
+    public int getLeavePosition() {
+        return 7;
     }
 
-    public boolean isServicePosition(int number, StreetVehicle vehicle){
-        if (vehiclesServicing.size() > 0){
-            if (vehiclesServicing.get(0).equals(vehicle)){
+    public boolean isServicePosition(int number, StreetVehicle vehicle) {
+        if (vehiclesServicing.size() > 0) {
+            if (vehiclesServicing.get(0).equals(vehicle)) {
                 return number == 5;
-            }else{
+            } else {
                 return number == 2;
             }
-        }else{
+        } else {
             return number == 5;
         }
     }
 
-    public boolean isLeavePosition(int number){
+    public boolean isLeavePosition(int number) {
         return number == 6;
     }
 

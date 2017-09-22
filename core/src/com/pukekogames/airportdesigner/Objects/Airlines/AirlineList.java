@@ -45,12 +45,12 @@ public class AirlineList {
     }
 
     public static Color getAirlineBaseColor(int id) {
-        if (id < 0 || id > airlines.length) return new Color();
+        if (id < 0 || id > airlines.length) return Color.WHITE;
         return (Color) airlines[id][3];
     }
 
     public static Color getAirlineLogoColor(int id) {
-        if (id < 0 || id > airlines.length) return new Color();
+        if (id < 0 || id > airlines.length) return Color.WHITE;
         return (Color) airlines[id][4];
     }
 

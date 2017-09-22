@@ -380,6 +380,14 @@ public abstract class Vehicle extends ClickableGameObject {
         float headingToTarget;
         if (currentRoad != null) {
             PointFloat ownPos = new PointFloat(Align_X, Align_Y);
+
+//            PointFloat startPoint = currentRoad.getStartPosition();
+//            PointFloat endPoint = currentRoad.getEndPosition();
+//            double startDistanz = CommonMethods.getDistance(ownPos, startPoint);// Math.pow(ownPos.x - startPoint.getX(), 2) + Math.pow(ownPos.y - startPoint.getY(), 2);
+//            double endDistanz = CommonMethods.getDistance(ownPos, endPoint);// Math.pow(ownPos.x - endPoint.getX(), 2) + Math.pow(ownPos.y - endPoint.getY(), 2);
+//            boolean sameDirectionAsCurrentRoad = startDistanz < endDistanz;
+
+
             if (sameDirectionAsRoad) {
                 headingToTarget = currentRoad.getHeading();
             } else {
@@ -414,7 +422,7 @@ public abstract class Vehicle extends ClickableGameObject {
             diffY = roadTarget.y - Align_Y;
 //            headingPoint = new Point((int) (Align_X + diffX * 0.8), (int) ( Align_Y + diffY * 0.8));
             float headingDirectToTarget = (float) Math.toDegrees(Math.atan2(diffY, diffX)) % 360;
-            float headingShowLength = 200f;
+            float headingShowLength = 1000f;
             headingPoint.set((int) (Align_X + Math.cos(Math.toRadians(headingDirectToTarget)) * headingShowLength), (int) (Align_Y + Math.sin(Math.toRadians(headingDirectToTarget)) * headingShowLength));
             float headingDifferenceTarget = headingDirectToTarget - headingToTarget;
             headingDifferenceTarget = (headingDifferenceTarget + 180) % 360 - 180;

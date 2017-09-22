@@ -77,7 +77,7 @@ public abstract class StreetVehicle extends Vehicle {
             GameInstance.Airport().removeVehicleTask(task);
 //            driveHome();
             ParkGate targetGate = task.getParkPosition();
-            parkgateNumber++;
+//            parkgateNumber++;
             ignoreCollisionTime = 100;
             driveState = VehicleState.drivingToDepot;
         }

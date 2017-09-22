@@ -20,6 +20,8 @@ import com.pukekogames.airportdesigner.Settings;
 import com.pukekogames.airportdesigner.TextureLoader;
 import com.pukekogames.airportdesigner.UiManager;
 
+import java.util.ArrayList;
+
 /**
  * Created by Marko Rapka on 08.06.2017.
  */

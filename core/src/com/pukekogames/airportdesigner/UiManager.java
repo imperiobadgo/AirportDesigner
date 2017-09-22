@@ -70,6 +70,7 @@ public class UiManager {
     private ImageButton removeSelectionButton;
     private ImageButton buildRoadButton;
     private TextButton gameSpeedButton;
+    private DebugDialog debugDialog;
 
     public UiManager(Main main, GameScreen gameScreen) {
         this.main = main;
@@ -326,7 +327,12 @@ public class UiManager {
         debugButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                GameInstance.Settings().DebugMode = !GameInstance.Settings().DebugMode;
+
+                GameInstance.Airport().setPauseSimulation(true);
+                removeCircleButtons();
+                debugDialog.show(gameStage);
+
+//                GameInstance.Settings().DebugMode = !GameInstance.Settings().DebugMode;
             }
         });
 
@@ -407,6 +413,8 @@ public class UiManager {
         depotListDialog = new DepotListDialog(main, null, "", skin);
 
         airplaneInfoDialog = new AirplaneInfoDialog(main, "", skin);
+
+        debugDialog = new DebugDialog(main, "", skin);
     }
 
     private void setupBuildRoadButton() {
