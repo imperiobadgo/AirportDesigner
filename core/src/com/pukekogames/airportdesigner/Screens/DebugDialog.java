@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.pukekogames.airportdesigner.GameInstance.GameInstance;
 import com.pukekogames.airportdesigner.Main;
+import com.pukekogames.airportdesigner.Settings;
 
 /**
  * Created by Marko Rapka on 10.09.2017.
@@ -17,8 +18,8 @@ public class DebugDialog extends Dialog {
     public DebugDialog(Main main, String title, Skin skin) {
         super(title, skin);
 
-        setModal(true);
-        setMovable(false);
+//        setModal(true);
+//        setMovable(false);
 
         TextButton showRoadButton = new TextButton("ShowRoads", getSkin());
         final Label showRoadLabel = new Label("" + GameInstance.Settings().DebugShowRoad, getSkin());
@@ -64,6 +65,18 @@ public class DebugDialog extends Dialog {
             }
         });
 
+        TextButton showTableButton = new TextButton("ShowTables", getSkin());
+        final Label showTableLabel = new Label("" + GameInstance.Settings().DebugShowTables, getSkin());
+
+        showTableButton.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                GameInstance.Settings().DebugShowTables = !GameInstance.Settings().DebugShowTables;
+                showTableLabel.setText("" + GameInstance.Settings().DebugShowTables);
+                Settings.Instance().uiManager.showTableDebug(GameInstance.Settings().DebugShowTables);
+            }
+        });
+
         getContentTable().add(showRoadButton);
         getContentTable().add(showRoadLabel);
         getContentTable().row().padBottom(10);
@@ -76,6 +89,9 @@ public class DebugDialog extends Dialog {
         getContentTable().add(showVehicleHeadingButton);
         getContentTable().add(showVehicleHeadingLabel);
         getContentTable().row().padBottom(10);
+        getContentTable().add(showTableButton);
+        getContentTable().add(showTableLabel);
+        getContentTable().row().padBottom(10);
 
         button("OK", "OK");
     }
@@ -83,7 +99,7 @@ public class DebugDialog extends Dialog {
     @Override
     public float getPrefWidth() {
         // force dialog width
-        return 800f;
+        return 500f;
     }
 
     @Override

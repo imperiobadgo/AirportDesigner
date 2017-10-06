@@ -65,6 +65,7 @@ public class CommonSettings implements Serializable {
     public boolean DebugShowAirplanes = false;
     public boolean DebugShowVehiclePath = false;
     public boolean DebugShowVehicleHeading = false;
+    public boolean DebugShowTables = false;
 
     //building
     transient public boolean buildRoadSelected = false;

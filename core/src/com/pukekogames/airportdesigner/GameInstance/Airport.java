@@ -22,6 +22,7 @@ import com.pukekogames.airportdesigner.Objects.Vehicles.StreetVehicle;
 import com.pukekogames.airportdesigner.Objects.Vehicles.Vehicle;
 import com.pukekogames.airportdesigner.Objects.Vehicles.VehicleData.AirplanePerformance;
 import com.pukekogames.airportdesigner.Objects.Vehicles.VehicleData.AirplaneState;
+import com.pukekogames.airportdesigner.Settings;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -394,12 +395,6 @@ public class Airport implements Serializable {
             updateConnectionCheck();
         }
 
-        float angleChange = 0.05f - (0.01f * (GameInstance.Settings().level));
-        if (angleChange < 0.01f) {
-            angleChange = 0.01f;
-        }
-        windDirection = (windDirection + angleChange) % 360;
-
         if (timeToNextAirplane < 0) {
 
             if (getAmountOfFreeGates() > 0) {
@@ -449,6 +444,14 @@ public class Airport implements Serializable {
             RemoveVehicle(removeVehicle);
         }
 
+    }
+
+    public void updateWind(){
+        float angleChange = 0.05f - (0.01f * (GameInstance.Settings().level));
+        if (angleChange < 0.01f) {
+            angleChange = 0.01f;
+        }
+        windDirection = (windDirection + angleChange) % 360;
     }
 
     public int getAmountOfFreeGates() {
@@ -614,7 +617,10 @@ public class Airport implements Serializable {
     }
 
     public void AddAllNextAirplane(ArrayList<Airplane> airplanes) {
-        if (nextAirplanes.size() < runways.size() * 2) nextAirplanes.addAll(airplanes);
+        if (nextAirplanes.size() < runways.size() * 2){
+            nextAirplanes.addAll(airplanes);
+            Settings.Instance().uiManager.updateArrivalControl();
+        }
     }
 
     private boolean newAirplane() {
@@ -648,6 +654,7 @@ public class Airport implements Serializable {
 
         if (getAllFreeGates(true).size() + getAllFreeGates(false).size() == 0) return false;
         nextAirplanes.remove(0);
+        Settings.Instance().uiManager.updateArrivalControl();
 
         float dirX = (float) -Math.cos(Math.toRadians(heading));// other direction for spawning airplane towars the runway
         float dirY = (float) -Math.sin(Math.toRadians(heading));

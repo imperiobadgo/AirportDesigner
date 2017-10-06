@@ -173,10 +173,11 @@ public class GameInstance implements Serializable {
 
     private void updateTime() {
         ticksPerTime += 1;
-        if (ticksPerTime == 4) {
+        //if there are no airplanes on the airport speed up time
+        if (ticksPerTime == 20 || (airport.getAirplaneCount() == 0 && ticksPerTime == 2)){
             time.increase();
             ticksPerTime = 0;
-
+            airport.updateWind();
             if (settings.level < 4) {
                 if (time.getHour() > 21) {
                     time.setTime(settings.maxTime / 6);

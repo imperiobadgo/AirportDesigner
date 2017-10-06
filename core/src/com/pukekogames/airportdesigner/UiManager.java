@@ -43,6 +43,7 @@ public class UiManager {
     private Main main;
     private GameScreen gameScreen;
     private Handler handler;
+    private ArrivalControl arrivalControl;
 
     public static Vector3 screenPos;
     public static Vector3 worldPos;
@@ -89,6 +90,12 @@ public class UiManager {
         this.handler = handler;
     }
 
+    public void showTableDebug(boolean show) {
+        infoTable.setDebug(show);
+        table.setDebug(show);
+        constructionTable.setDebug(show);
+    }
+
     public void setup() {
         skin = new Skin(Gdx.files.internal("ui\\uiskin.json"));
         final float buttonWidth = GameInstance.Settings().ButtonWidth * Gdx.graphics.getPpcX() / 25;
@@ -110,13 +117,8 @@ public class UiManager {
         setupScreens();
         table = new Table();
         table.setFillParent(true);
-//        table.align(Align.center | Align.top);
-//        table.align(Align.right | Align.top);
-//        table.setPosition(0, Gdx.graphics.getHeight());
-//        table.setDebug(true);
         constructionTable = new Table();
         infoTable = new Table();
-
 
         Drawable background = new SpriteDrawable(new Sprite(TextureLoader.Instance().getTexture(TextureLoader.indexCircleButtonBackground)));
         Drawable backgroundDown = new SpriteDrawable(new Sprite(TextureLoader.Instance().getTexture(TextureLoader.indexCircleButtonBackgroundClicked)));
@@ -125,23 +127,6 @@ public class UiManager {
         standardStyle.up = background;
         standardStyle.down = backgroundDown;
         standardStyle.checked = background;
-//        standardStyle.imageUp      = image;
-//        standardStyle.imageDown    = image;
-//        standardStyle.imageChecked = image;
-
-//        button = new ImageButton(standardStyle);
-//        button.setPosition(0,0);
-//        button.setWidth(30);
-//        button.setHeight(30);
-
-//        ImageButton.ImageButtonStyle buildStyle = new ImageButton.ImageButtonStyle(standardStyle);
-//        Drawable buildImage = new SpriteDrawable(new Sprite(TextureLoader.Instance().getTexture(TextureLoader.indexButtonBuild)));
-//
-//        buildStyle.imageUp = buildImage;
-//        buildStyle.imageDown = buildImage;
-//        buildStyle.imageChecked = buildImage;
-//
-//        ImageButton buildButton = new ImageButton(buildStyle);
 
         ImageButton optionButton = getButton(TextureLoader.indexOptionButton);
 
@@ -303,7 +288,7 @@ public class UiManager {
 
         if (Main.IS_STARTED_ON_MOBILE) {
             textButtonStyle = new TextButton.TextButtonStyle(drawable, drawable, drawable, boldFont);
-        }else{
+        } else {
             textButtonStyle = new TextButton.TextButtonStyle(drawable, drawable, drawable, main.font);
         }
 
@@ -355,44 +340,30 @@ public class UiManager {
         constructionTable.add(buildBuildingButton).padRight(padding);
         constructionTable.add(deleteRoadbutton);
 
+        arrivalControl = new ArrivalControl(style, skin);
+
+
         table.add(optionButton).padBottom(padding).right().align(Align.top | Align.right);
         table.row();
         table.add();
         table.add();
         table.add(constructionButton).align(Align.top | Align.right);
+        table.row();
+
+        table.add(arrivalControl.getTable()).align(Align.left);
+        table.add();
+        table.add(timeTableButton).align(Align.top | Align.right);
         table.row().expandY();
 
         table.add(removeSelectionButton).align(Align.left | Align.bottom);
         table.add();
-        table.add(timeTableButton).align(Align.top | Align.right);
+        table.add();
 
         table.row();
         table.add(buildRoadButton).align(Align.left | Align.bottom).padBottom(100f);
         table.add();
         table.add();
 
-//        TextButton startButton = new TextButton("Start Game", skin);
-//        TextButton quitButton = new TextButton("Quit Game", skin);
-//
-//        table.padTop(buttonHeight / 5);
-//        table.add(startButton).width(buttonWidth).height(buttonHeight).padBottom(buttonHeight / 5);
-//
-//        table.add(quitButton).width(buttonWidth).height(buttonHeight);
-//
-//        final ExitDialog dialog = new ExitDialog("", skin);
-//
-//
-//        quitButton.addListener(new ClickListener() {
-//			@Override
-//			public void clicked(InputEvent event, float x, float y) {
-//			    GameInstance.Airport().setPauseSimulation(true);
-//                dialog.show(screenStage);
-//
-//			}
-//		});
-
-
-//        gameStage.addActor(button);
         screenStage.addActor(table);
         switchBuild(0);
     }
@@ -544,6 +515,10 @@ public class UiManager {
             button.remove();
         }
         buttonCircle.clearButtons();
+    }
+
+    public void updateArrivalControl(){
+        arrivalControl.updateContent();
     }
 
     public void projectVector(Vector3 vector) {
